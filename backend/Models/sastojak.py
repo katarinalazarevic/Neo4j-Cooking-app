@@ -1,18 +1,29 @@
-from Models.nutritivnavrednost import NutritivnaVrednost
-
-
 class Sastojak:
-    def _init_(self, ime, gramaza, nutritivna_vrednost):
-        self.ime = ime
-        self.gramaza = gramaza
-        self.nutritivna_vrednost = nutritivna_vrednost
+    def __init__(self, naziv,kalorijska_vrednost,proteini,masti,ugljeni_hidrati,cena):
+        self.naziv = naziv
+        self.kalorijska_vrednost=kalorijska_vrednost
+        self.proteini=proteini
+        self.masti=masti
+        self.ugljeni_hidrati=ugljeni_hidrati
+        self.cena=cena
 
-    def _str_(self):
-        return f"Ime: {self.ime}, Gramaza: {self.gramaza}g, Nutritivna vrednost: {self.nutritivna_vrednost}"
 
-# Primer korišćenja
-nutritivna_vrednost_sastojka = NutritivnaVrednost(proteini=10, masti=5, ugljeni_hidrati=15, kalorije=150)
-sastojak = Sastojak(ime="Sir", gramaza=200, nutritivna_vrednost=nutritivna_vrednost_sastojka)
+    def dodaj_sastojak(self):
+        # Proveri da li sastojak sa datim nazivom već postoji
+        existing_sastojak = self.graph.run("MATCH (s:Sastojak {naziv: $naziv}) RETURN s", naziv=self.naziv).first()
 
-# Prikazivanje informacija o sastojku
-print(sastojak)
+        if existing_sastojak:
+            return "Sastojak sa datim nazivom već postoji."
+
+        # Kreiraj novi sastojak
+        #sastojak = Node("Sastojak", naziv=self.naziv)
+        #self.graph.create(sastojak)
+
+        return "Sastojak uspešno dodat."
+
+    def vrati_sastojke(self):
+        # Vrati sve sastojke
+        result = self.graph.run("MATCH (s:Sastojak) RETURN s")
+        sastojci = [record["s"] for record in result]
+
+        return sastojci
