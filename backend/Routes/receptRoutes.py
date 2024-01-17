@@ -7,7 +7,7 @@ recept_routes = Blueprint("recept_routes", __name__)
 
 @recept_routes.route('/dodajRecept',methods=["POST"])
 def dodajRecept():
-    data=request.get_data()
+    data=request.get_json()
     naziv=data.get("naziv")
     opis=data.get("opis")
     sastojci=data.get("sastojci")
