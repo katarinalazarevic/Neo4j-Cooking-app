@@ -1,0 +1,68 @@
+/* LinkedInStatus.css */
+.profile {
+    max-width: 600px;
+    margin: 0 auto;
+    background-color: #abf083;
+    padding: 30px;
+    margin-top: 15px;
+    margin-bottom:15px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .name {
+    font-size: 24px;
+    font-weight: bold;
+    color: black;
+  }
+  
+  .pocetni
+  {
+    margin-bottom:30px;
+  }
+  .email {
+    font-size: 16px;
+    color: #555;
+   
+  }
+  .actions AccessibilityIcon {
+    color: red; /* ili bilo koja druga boja koja se lako uočava */
+  }
+  
+  .status {
+    font-size: 18px;
+    margin-top: 10px;
+    color: black;
+  }
+  
+  .actions {
+    margin-top: 20px;
+  }
+  
+  .dodatni
+  {
+    color:black
+  }
+  button {
+    padding: 10px;
+    margin-right: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+    border-radius: 4px;
+  }
+  
+  button.like {
+    background-color: #0073b1;
+    color: #fff;
+  }
+  
+  button.comment {
+    background-color: #e0e0e0;
+  }
+  
+  button.share {
+    background-color: #0073b1;
+    color: #fff;
+  }
+  
