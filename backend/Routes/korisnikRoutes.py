@@ -30,7 +30,8 @@ def register():
         korisnik = Node("Korisnik", ime=ime, prezime=prezime, datum_rodjenja=datum_rodjenja, email=email, sifra=hashed_sifra.decode('utf-8'))
         graph.create(korisnik)
 
-        return "Korisnik uspešno registrovan.", 201  # 201 označava kreiran resurs
+        return jsonify({'message': 'SUCCESS'}), 201
+       
 
     except Exception as e:
         return str(e), 500  # 500 označava internu serversku grešku
@@ -64,7 +65,7 @@ def update():
     except Exception as e:
         return str(e), 500 
     
-@korisnik_routes.route('/login')
+@korisnik_routes.route('/login', methods=["POST"])
 def login():
     try:
         data = request.get_json()
@@ -78,7 +79,8 @@ def login():
 
             # Proveri podudaranje unete šifre sa heširanom šifrom iz baze
             if checkpw(sifra.encode('utf-8'), heširana_sifra_iz_baze.encode('utf-8')):
-                return "Uspešno ste se ulogovali."
+                 return jsonify({'message': 'SUCCESS'}), 200
+                 
             else:
                 return "Pogrešna šifra.", 401  # 401 označava neautorizovan pristup
         else:
