@@ -95,7 +95,7 @@ def azurirajRecept():
         return str(e), 500
 
     
-@recept_routes.route('/receptiKorisnika', methods=["GET"])
+@recept_routes.route('/receptiKorisnika', methods=["POST"])
 def receptiKorisnika():
     try:
         data=request.get_json()

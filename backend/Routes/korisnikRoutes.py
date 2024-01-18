@@ -1,3 +1,4 @@
+from ast import Constant
 from flask import request,jsonify, Blueprint
 from py2neo import Graph, Node
 from bcrypt import checkpw, hashpw, gensalt
@@ -36,8 +37,8 @@ def register():
     except Exception as e:
         return str(e), 500  # 500 označava internu serversku grešku
     
-@korisnik_routes.route('/vrati', methods=['GET'])
-def proba():
+@korisnik_routes.route('/vratiKorisnika', methods=['GET'])
+def vratiKorisnika():
     return "Dobro",201
 
 @korisnik_routes.route('/obrisiKorisnika',methods=["DELETE"])
@@ -79,8 +80,12 @@ def login():
 
             # Proveri podudaranje unete šifre sa heširanom šifrom iz baze
             if checkpw(sifra.encode('utf-8'), heširana_sifra_iz_baze.encode('utf-8')):
-                 return jsonify({'message': 'SUCCESS'}), 200
-                 
+                 response ={
+                    "korisnik": korisnik,
+                    "message": "SUCCESS"
+                }
+                 #return jsonify({'message': 'SUCCESS', 'ime': korisnik}), 200
+                 return response, 200
             else:
                 return "Pogrešna šifra.", 401  # 401 označava neautorizovan pristup
         else:

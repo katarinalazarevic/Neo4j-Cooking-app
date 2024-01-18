@@ -51,9 +51,7 @@ const Login = () => {
     setEmail(emailValue);
     setPassword(passwordValue);
     
-    const kupacId = 1; // Primer ID-ja kupca
-
-    // Poziv funkcije koja šalje GET zahtev na server
+   
     try {
       const response = await axios.post('http://127.0.0.1:5000/login',
         {
@@ -73,8 +71,10 @@ const Login = () => {
       if (response.status === 200) {
         if (response.data.message === "SUCCESS") {
           console.log("Poruka o uspešnoj prijavi:", response.data.message);
-          //setEmail(email); // Postavljanje emaila u stanje
-          //authCtx.login('dummy-token', email);
+          localStorage.setItem('username', emailValue);
+          localStorage.setItem('ime', response.data.korisnik.ime)
+          localStorage.setItem('prezime', response.data.korisnik.prezime)
+         
           return navigate("/Home");
         } else {
           console.log(

@@ -9,7 +9,7 @@ import { IconButton } from '@mui/material';
 import StarsIcon from '@mui/icons-material/Stars';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
-const Recept = () => {
+const Recept = ({naziv,opis,sastojci, ime,email,prezime}) => {
   const [showAdditionalText, setShowAdditionalText] = useState(false);
   const [nacinPripreme, setnacinPripreme] = useState(false);
 
@@ -30,36 +30,41 @@ const Recept = () => {
   return (
     <div className="profile">
          <div className="pocetni">
-                <div className="name">Ime Prezime   </div>
-                <div className="email">email@example.com</div>
+                <div className="name">{ime} {prezime}  </div>
+                <div className="email">{email}</div>
          </div>
-      <div className="status">Ovo je moj status na LinkedIn-u. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div>
+      <div className="status">{naziv}</div>
     
       <div className="label dodatni" onClick={handleLabelClick}>
         <Link underline="hover">
-          {'Sastojci'} 
+          {'Sastojci'}   <KeyboardArrowDownIcon> </KeyboardArrowDownIcon>
         </Link>
-           <KeyboardArrowDownIcon> </KeyboardArrowDownIcon>
+          
       </div>
        
       {showAdditionalText && (
         <div className="additional-text dodatni">
-          <AccessibilityIcon />
-         Ovde ce da se pobroje svi sastojci i mogu da se koriste <li> </li>
+         
+         
+          <ul>
+            {sastojci.map((sastojak, index) => (
+              <li key={index}>{sastojak}</li>
+            ))}
+          </ul>
         </div>
       )}
 
       <div className="label dodatni" onClick={nacinPripremeHandler}>
         <Link underline="hover">
-          {'Nacin pripreme'} 
+          {'Nacin pripreme'}  <KeyboardArrowDownIcon> </KeyboardArrowDownIcon>
         </Link>
-           <KeyboardArrowDownIcon> </KeyboardArrowDownIcon>
+          
       </div>
 
       {nacinPripreme && (
         <div className="additional-text dodatni">
-          <AccessibilityIcon />
-            Ovde ce da bude nacin pripreme, kratak opis  
+         {opis}
+              
         </div>
       )}
 
