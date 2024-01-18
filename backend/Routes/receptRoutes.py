@@ -32,14 +32,16 @@ def dodajRecept():
 
     # Poveži recept sa sastojcima
     for sastojak in sastojci:
-        sastojak_node = graph.run("MERGE (s:Sastojak {naziv: $naziv}) RETURN s", naziv=sastojak).evaluate()
+        sastojak_naziv=sastojak.split(' ' ,1)[1]
+        print(sastojak_naziv)
+        sastojak_node = graph.run("MERGE (s:Sastojak {naziv: $naziv}) RETURN s", naziv=sastojak_naziv).evaluate()
 
         if not sastojak_node:
-            return f"Sastojak '{sastojak}' ne postoji."
+            return f"Sastojak '{sastojak_naziv}' ne postoji."
 
         povezi_query = "MATCH (r:Recept {naziv: $naziv}), (s:Sastojak {naziv: $sastojak}) " \
                        "CREATE (r)-[:SADRZI]->(s)"
-        graph.run(povezi_query, naziv=naziv, sastojak=sastojak)
+        graph.run(povezi_query, naziv=naziv, sastojak=sastojak_naziv)
 
     return "Recept uspešno dodat sa sastojcima."
 
@@ -126,5 +128,54 @@ def recepti_po_kategoriji():
         recepti = [record["r"] for record in result]
 
         return jsonify({"recepti": recepti}), 200
+    except Exception as e:
+        return str(e), 500
+    
+@recept_routes.route('/receptiPoCeni')
+def receptiPoCeni():
+    try:
+        data=request.get_json()
+        cenaOd=data.get("cenaOd")
+        cenaDo=data.get("cenaDo")
+        if cenaOd is None:
+            cenaOd=0
+        result = graph.run("MATCH (r:Recept) RETURN r")
+        recepti = [record["r"] for record in result]
+        ukupna_cena=0
+        query = """
+      MATCH (r:Recept)
+        OPTIONAL MATCH (r)-[:SADRZI]->(s:Sastojak)
+        RETURN DISTINCT r, COLLECT(s) AS sastojci
+
+        """
+
+        result = graph.run(query)
+        recepti_sastojci = [(record["r"], record["s"]) for record in result]
+        print(recepti_sastojci)
+        odgovarajuci_recepti=[]
+        for recept, sastojak in recepti_sastojci:
+            for sastojak_unos in recept["sastojci"]:
+                kolicina, sastojak_naziv = map(str.strip, sastojak_unos.split(' ', 1))
+                print(sastojak_naziv)
+                print(kolicina)
+                sastojak_node = graph.run("MERGE (s:Sastojak {naziv: $naziv}) RETURN s", naziv=sastojak_naziv).evaluate()
+
+                if sastojak_node:
+                    cena_sastojka = sastojak_node.get("cena", 0)
+                    print(cena_sastojka)
+                    kol=float(kolicina[:-2])
+                    cena=float(cena_sastojka[:-3])
+                    trenutna_cena = (kol  * cena)/100  # Ukloni 'gr' i pretvori u float
+                    print(trenutna_cena)
+
+                ukupna_cena=ukupna_cena+trenutna_cena
+            print(ukupna_cena)
+            if float(cenaOd) <= float(ukupna_cena) <= float(cenaDo):
+                odgovarajuci_recepti.append(recept)
+
+        return jsonify({"recepti": odgovarajuci_recepti})
+
+        
+
     except Exception as e:
         return str(e), 500

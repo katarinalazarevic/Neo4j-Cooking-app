@@ -137,6 +137,24 @@ venv.bak/
 
 # mkdocs documentation
 /site
+# React build artifacts
+/build/
+
+# Node.js
+node_modules/
+
+# Dependency directories
+**/bower_components/
+**/jspm_packages/
+
+# Yarn
+yarn-error.log*
+
+# Webpack
+webpack-*.js
+
+# Visual Studio Code
+.vscode/
 
 # mypy
 .mypy_cache/

@@ -6,6 +6,7 @@ from flask_cors import CORS
 from Routes.korisnikRoutes import korisnik_routes
 from Routes.receptRoutes import recept_routes
 from Routes.sastojakRoutes import sastojak_routes
+from Routes.komentarRoutes import komentar_routes
 
 app = Flask(__name__)
 api = Api(app)
@@ -15,6 +16,7 @@ CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}}, supports_cred
 app.register_blueprint(korisnik_routes)
 app.register_blueprint(recept_routes)
 app.register_blueprint(sastojak_routes)
+app.register_blueprint(komentar_routes)
 
 
 # Postavi Neo4j konekciju
