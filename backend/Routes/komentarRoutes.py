@@ -86,3 +86,22 @@ def komentariKorisnika():
         return dumps({"komentari": komentari}), 200, {'Content-Type': 'application/json'}
     except Exception as e:
         return f"Greška prilikom dohvatanja komentara korisnika: {str(e)}", 500
+@komentar_routes.route('/komentariZaRecept', methods=["POST"])
+def komentariZaRecept():
+    try:
+        data = request.get_json()
+        naziv_recepta = data.get("naziv_recepta")
+
+        query = """
+        MATCH (r:Recept {naziv: $naziv_recepta})<-[:ZA]-(k:Komentar)<-[:OSTAVLJA]-(korisnik:Korisnik)
+        WITH k, korisnik
+        RETURN k.sadrzaj AS sadrzaj_komentara, korisnik.email AS email_korisnika
+        """
+
+        result = graph.run(query, naziv_recepta=naziv_recepta)
+        komentari = [{"sadrzaj": record["sadrzaj_komentara"], "korisnik_email": record["email_korisnika"]} for record in result]
+
+        return jsonify({"komentari": komentari})
+
+    except Exception as e:
+        return str(e), 500
