@@ -22,7 +22,7 @@ def dodajRecept():
         return "Recept sa datim nazivom već postoji."
 
     # Kreiraj novi recept
-    recept = Node("Recept", naziv=naziv, sastojci=sastojci, opis_pripreme=opis, kategorija=kategorija, ocena=0)
+    recept = Node("Recept", naziv=naziv, sastojci=sastojci, opis_pripreme=opis, kategorija=kategorija, ocena=0,broj_ocena=0)
     graph.create(recept)
 
     # Poveži korisnika sa receptom
@@ -184,7 +184,7 @@ def receptiPoCeni():
 def dodajOcenuReceptu():
     try:
         data = request.get_json()
-        ocena = data.get("ocena")
+        nova_ocena = data.get("ocena")
         naziv_recepta = data.get("naziv_recepta")
 
         # Proveri da li postoji recept sa datim nazivom
@@ -194,14 +194,20 @@ def dodajOcenuReceptu():
         if not existing_recept:
             return "Recept sa datim nazivom ne postoji."
 
-        # Uzmi trenutnu ocenu recepta
+        # Ako postoji recept, ažuriraj ocenu
         trenutna_ocena = existing_recept.get("ocena", 0)
+        broj_ocena = existing_recept.get("broj_ocena", 0) + 1
 
-        # Dodaj novu ocenu i podeli sa 2
-        nova_ocena = (trenutna_ocena + ocena) / 2
+        nova_ocena = (trenutna_ocena + nova_ocena) / broj_ocena
 
-        # Ažuriraj ocenu recepta
-        graph.run("MATCH (r:Recept {naziv: $naziv_recepta}) SET r.ocena = $nova_ocena", naziv_recepta=naziv_recepta, nova_ocena=nova_ocena)
+        # Ažuriraj vrednost ocene i broj ocena u čvoru Recept
+        query = """
+        MATCH (r:Recept {naziv: $naziv_recepta})
+        SET r.ocena = $nova_ocena
+        SET r.broj_ocena = $broj_ocena
+        RETURN r
+        """
+        graph.run(query, naziv_recepta=naziv_recepta, nova_ocena=nova_ocena, broj_ocena=broj_ocena)
 
         return f"Ocena recepta '{naziv_recepta}' uspešno ažurirana na {nova_ocena}."
 
