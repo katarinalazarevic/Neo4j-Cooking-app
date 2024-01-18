@@ -107,7 +107,7 @@ const Login = () => {
     
     <div>
      
-      <div id="algn">
+      <div id="algn1">
         <div id="container">
           <p className="head">Login</p>
           <form action="/" className="input-container">

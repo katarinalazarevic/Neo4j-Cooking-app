@@ -9,6 +9,7 @@ import { IconButton } from '@mui/material';
 import StarsIcon from '@mui/icons-material/Stars';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
+
 const Recept = ({naziv,opis,sastojci, ime,email,prezime}) => {
   const [showAdditionalText, setShowAdditionalText] = useState(false);
   const [nacinPripreme, setnacinPripreme] = useState(false);
@@ -78,6 +79,14 @@ const Recept = ({naziv,opis,sastojci, ime,email,prezime}) => {
         <IconButton className="like" color="primary" onClick={LikeHandler}>
           <ThumbUpIcon />
         </IconButton>
+        
+  
+
+
+    <IconButton>
+      <CommentIcon style={{ fontSize: 45 }} />
+    </IconButton>
+
         
       </div>
     </div>

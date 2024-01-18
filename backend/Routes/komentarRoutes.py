@@ -72,7 +72,7 @@ def izmeniKomentar():
     except Exception as e:
         return f"Greška prilikom izmene komentara: {str(e)}", 500
     
-@komentar_routes.route('/komentariKorisnika', methods=["GET"])
+@komentar_routes.route('/komentariKorisnika', methods=["POST"])
 def komentariKorisnika():
     try:
         data = request.get_json()
