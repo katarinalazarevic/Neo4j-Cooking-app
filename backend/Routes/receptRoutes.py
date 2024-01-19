@@ -216,3 +216,57 @@ def dodajOcenuReceptu():
 
     except Exception as e:
         return str(e), 500
+
+@recept_routes.route('/nutritivnaVrednostRecepta',methods=['POST'])
+def nutritivnaVrednostRecepta():
+    try:
+        data=request.get_json()
+        recept=data.get("naziv")
+
+        result=graph.run("""MATCH (r:Recept {naziv: "Proba4"})-[:SADRZI]->(s:Sastojak)
+                            WITH r.sastojci AS naziv_sastojka, s
+                            RETURN 
+                              naziv_sastojka AS naziv_sastojka,
+                              COLLECT(DISTINCT s.kalorijska_vrednost) AS kalorijska_vrednost,
+                              COLLECT(DISTINCT s.proteini) AS proteini,
+                              COLLECT(DISTINCT s.masti) AS masti,
+                              COLLECT(DISTINCT s.ugljeni_hidrati) AS ugljeni_hidrati""").data()
+        
+        sastojci = result[0]['naziv_sastojka']
+        kalorijska_vrednost = result[0]['kalorijska_vrednost']
+        proteini = result[0]['proteini']
+        masti = result[0]['masti']
+        ugljeni_hidrati = result[0]['ugljeni_hidrati']
+        print(sastojci,kalorijska_vrednost,proteini,masti,ugljeni_hidrati)
+        sumKCAL=0
+        sumUH=0
+        sumM=0
+        sumP=0
+
+        for i in range(len(sastojci)):
+            kolicina_string, sastojak_naziv = map(str.strip, sastojci[i].split(' ', 1))
+            kolicina = float(''.join(filter(str.isdigit, kolicina_string)))
+            print(sastojak_naziv)
+            print(kolicina)
+            kalorije=float(''.join(filter(str.isdigit, kalorijska_vrednost[i])))
+            print(kalorije)
+            sumKCAL+=kolicina*kalorije/100
+            uh=float(ugljeni_hidrati[i])
+            m=float(masti[i])
+            p=float(proteini[i])
+            sumUH+=kolicina*uh/100
+            sumM+=kolicina*m/100
+            sumP+=kolicina*p/100
+            print("suma", sumKCAL)
+
+        # Nastavite sa ostatkom koda...
+
+        return jsonify({
+            "SumKCAL": sumKCAL,
+            "SumUH": sumUH,
+            "SumM": sumM,
+            "SumP": sumP
+        }), 200
+    
+    except Exception as e:
+        return str(e), 500

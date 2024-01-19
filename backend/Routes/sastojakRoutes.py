@@ -1,6 +1,7 @@
 from flask import request,jsonify, Blueprint
 from py2neo import Graph, Node
 from bcrypt import checkpw, hashpw, gensalt
+from Models.sastojak import Sastojak
 from database import graph
 sastojak_routes = Blueprint("sastojak_routes", __name__)
 
@@ -104,5 +105,41 @@ def vratiSastojak():
       
 
 
+@sastojak_routes.route('/nutritivneVrednostiSastojka', methods=['POST'])
+def nutritivneVrednostiSastojka():
+    try:
+        data = request.get_json()
+        naziv = data.get("naziv")
         
+        query = """
+            MATCH (s:Sastojak {naziv: $naziv})
+            RETURN s
+        """
+
+        result = graph.run(query, naziv=naziv)
+        sastojak_info = result.evaluate()
+
+        if not sastojak_info:
+            return {"error": "Sastojak nije pronadjen"}, 404
+
+        # Izdvojimo potrebne informacije iz sastojak_info
+        naziv = sastojak_info["naziv"]
+        kalorijska_vrednost = sastojak_info["kalorijska_vrednost"]
+        proteini = sastojak_info["proteini"]
+        masti = sastojak_info["masti"]
+        ugljeni_hidrati = sastojak_info["ugljeni_hidrati"]
+
+        # Vraćanje rezultata kao JSON objekta u odgovoru
+        return jsonify({
+            "Naziv": naziv,
+            "Kalorijska vrednost": kalorijska_vrednost,
+            "Proteini": proteini,
+            "Masti": masti,
+            "Ugljeni hidrati": ugljeni_hidrati
+        }), 200
+
+       
+
+    except Exception as e:
+        return str(e), 500
 
