@@ -29,6 +29,28 @@
     color: red; /* ili bilo koja druga boja koja se lako uočava */
   }
   
+  .commentContainer {
+   border : 1px solid black;
+    padding: 10px;
+    margin-bottom: 10px;
+    width: 200px;
+  }
+  .commentsWrapper {
+   
+    overflow-x: auto; /* Omogući horizontalni skrol ako je potrebno */
+  }
+  
+  .commentsContainer1 {
+    display: flex;
+    white-space: nowrap; /* Spriječava prelazak u novi red */
+  }
+  
+  .commentContainer {
+    margin-right: 10px; /* Razmak između komentara */
+  }
+  
+
+  
   .status {
     font-size: 18px;
     margin-top: 10px;
@@ -65,4 +87,20 @@
     background-color: #0073b1;
     color: #fff;
   }
+  /* Stilovi */
+.custom-link {
+  cursor: pointer;
+  color: inherit;
+  text-decoration: none;
+  position: relative;
   
+}
+
+.custom-link:hover::before {
+  content: "";
+  position: absolute;
+  width: 20%;
+  height: 1px;
+  bottom: -2px;
+  background-color: currentColor; /* Nasleđuje boju teksta */
+}
