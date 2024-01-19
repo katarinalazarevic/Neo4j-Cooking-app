@@ -186,19 +186,22 @@ def dodajOcenuReceptu():
         data = request.get_json()
         nova_ocena = data.get("ocena")
         naziv_recepta = data.get("naziv_recepta")
-
+        nova_ocena=(float)(nova_ocena)
         # Proveri da li postoji recept sa datim nazivom
-        existing_recept = graph.run("MATCH (r:Recept {naziv: $naziv_recepta}) RETURN r", naziv=naziv_recepta)
+        existing_recept = graph.run("MATCH (r:Recept {naziv: $naziv_recepta}) RETURN r", naziv_recepta=naziv_recepta)
         existing_recept = existing_recept.evaluate()
 
         if not existing_recept:
             return "Recept sa datim nazivom ne postoji."
 
         # Ako postoji recept, ažuriraj ocenu
-        trenutna_ocena = existing_recept.get("ocena", 0)
-        broj_ocena = existing_recept.get("broj_ocena", 0) + 1
-
-        nova_ocena = (trenutna_ocena + nova_ocena) / broj_ocena
+        trenutna_ocena = existing_recept.get("ocena")
+        broj_ocena = existing_recept.get("broj_ocena") + 1
+        if(broj_ocena==0):
+            nova_ocena=nova_ocena
+        else:
+            nova_ocena = (trenutna_ocena + nova_ocena) / 2
+        
 
         # Ažuriraj vrednost ocene i broj ocena u čvoru Recept
         query = """
