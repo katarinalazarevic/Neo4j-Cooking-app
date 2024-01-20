@@ -93,3 +93,85 @@ def login():
 
     except Exception as e:
         return str(e), 500 
+@korisnik_routes.route('/zapratiKorisnika', methods=['POST'])
+def zapratiKorisnika():
+    try:
+        data = request.get_json()
+        korisnik1email = data.get("korisnik1")
+        korisnik2email = data.get("korisnik2")
+
+        # Provera da li korisnici postoje
+        korisnik1 = graph.run("MATCH (korisnik1:Korisnik {email: $email}) RETURN korisnik1", email=korisnik1email).data()
+        korisnik2 = graph.run("MATCH (korisnik2:Korisnik {email: $email}) RETURN korisnik2", email=korisnik2email).data()
+
+        if not korisnik1:
+            return "Korisnik sa datim email-om ne postoji.", 404
+        elif not korisnik2:
+            return "Korisnik sa datim email-om ne postoji.", 404
+
+        # Izvodi upit za praćenje korisnika
+        pratilac_query = """
+        MATCH (korisnik1:Korisnik {email: $email1}), (korisnik2:Korisnik {email: $email2})
+        CREATE (korisnik1)-[:PRAĆENJE]->(korisnik2)
+        """
+        graph.run(pratilac_query, email1=korisnik1email, email2=korisnik2email)
+
+        return "Uspešno praćenje korisnika.", 200
+
+    except Exception as e:
+        return str(e), 500
+
+@korisnik_routes.route('/otpratiKorisnika', methods=['POST'])
+def otpratiKorisnika():
+    try:
+        data = request.get_json()
+        korisnik1email = data.get("korisnik1")
+        korisnik2email = data.get("korisnik2")
+
+        # Provera da li korisnici postoje
+        korisnik1 = graph.run("MATCH (korisnik1:Korisnik {email: $email}) RETURN korisnik1", email=korisnik1email).data()
+        korisnik2 = graph.run("MATCH (korisnik2:Korisnik {email: $email}) RETURN korisnik2", email=korisnik2email).data()
+
+        if not korisnik1:
+            return "Korisnik sa datim email-om ne postoji.", 404
+        elif not korisnik2:
+            return "Korisnik sa datim email-om ne postoji.", 404
+
+        # Izvodi upit za otpraćivanje korisnika
+        otprati_query = """
+        MATCH (korisnik1:Korisnik {email: $email1})-[pracenje:PRAĆENJE]->(korisnik2:Korisnik {email: $email2})
+        DELETE pracenje
+        """
+        graph.run(otprati_query, email1=korisnik1email, email2=korisnik2email)
+
+        return "Uspešno otpraćivanje korisnika.", 200
+
+    except Exception as e:
+        return str(e), 500
+
+@korisnik_routes.route('/receptiKorisnikaKojePratim', methods=['POST'])
+def receptiKorisnikaKojePratim():
+    try:
+        data = request.get_json()
+        korisnik_email = data.get("korisnik")
+
+        # Provera da li korisnik postoji
+        korisnik = graph.run("MATCH (k:Korisnik {email: $email}) RETURN k", email=korisnik_email).data()
+
+        if not korisnik:
+            return "Korisnik sa datim email-om ne postoji.", 404
+
+        # Izvodi upit za dobijanje recepta koje postavljaju korisnici koje trenutni korisnik prati
+        recepti_query = """
+        MATCH (korisnik:Korisnik {email: $email})-[:PRAĆENJE]->(praceni:Korisnik)-[:POSTAVLJA]->(recept:Recept)
+        RETURN DISTINCT recept
+        """
+        recepti_pracenih_korisnika = graph.run(recepti_query, email=korisnik_email).data()
+
+        return jsonify({"recepti": recepti_pracenih_korisnika}), 200
+
+    except Exception as e:
+        return str(e), 500
+
+
+

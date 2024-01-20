@@ -96,7 +96,18 @@ def azurirajRecept():
     except Exception as e:
         return str(e), 500
 
+@recept_routes.route('/vratiRecepte',methods=['GET'])
+def vratiRecepte():
+    try:
     
+        result = graph.run("MATCH (r:Recept) RETURN r").data()
+        print(result)
+        recepti = [record["r"] for record in result]
+
+        return jsonify({"recepti": recepti}), 200
+    except Exception as e:
+        return str(e), 500
+
 @recept_routes.route('/receptiKorisnika', methods=["POST"])
 def receptiKorisnika():
     try:
