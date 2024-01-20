@@ -6,6 +6,7 @@ import Register from './Register/register';
 import Recept from './Recept/recept';
 import Home from './Home/home';
 import PrimarySearchAppBar from './Navbar/navbar';
+import DodavanjeRecepte from './dodavanjeRecepta/dodavanjeRecepta';
 
 
 function App() {
@@ -18,7 +19,7 @@ function App() {
         <Route path="/recept" element={<Recept />} />
        <Route path= "/home" element= {<Home></Home>}> </Route>
 
-        //<Route paht="/home1" element={<PrimarySearchAppBar> </PrimarySearchAppBar>}> </Route>
+       <Route path= "/dodavanjeRecepta" element= {<DodavanjeRecepte></DodavanjeRecepte>}> </Route>
       
       </Routes>
      

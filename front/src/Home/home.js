@@ -13,15 +13,19 @@ const Home= ()=>
     const storedUsername = localStorage.getItem('username');
     const storedName = localStorage.getItem('ime');
     const storedPrezime= localStorage.getItem('prezime');
+
+   // const [filtriraniRecepti,setfiltriraniRecepti]= useState([]);
     
     useEffect(()=>
     {
         console.log(storedUsername);
          ucitajRecepte();
          console.log(recepti);
+      //console.log(filtriraniRecepti);
+
     },[])
 
-
+    
     const ucitajRecepte = async () => {
         try {
           const response = await axios.post('http://127.0.0.1:5000/receptiKorisnika',
@@ -45,7 +49,12 @@ const Home= ()=>
     
     return (
         <div>
-            <PrimarySearchAppBar> </PrimarySearchAppBar>
+            <PrimarySearchAppBar
+              //setujFiltriraniRecepti={setfiltriraniRecepti} 
+              setujFiltriraniRecepti ={setRecepti}
+              ucitajsveRecepte= {ucitajRecepte}
+              >
+              </PrimarySearchAppBar>
             <div style={{ overflowY: 'scroll', maxHeight: '550px' }}>
         {recepti.map((recept, index) => (
           <Recept
@@ -56,9 +65,16 @@ const Home= ()=>
             ime={storedName}
             email={storedUsername}
             prezime={storedPrezime}
+            ocena={recept.ocena}
           />
         ))}
       </div>
+
+
+
+
+
+
      
        </div>
         

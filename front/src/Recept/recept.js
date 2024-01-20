@@ -15,7 +15,7 @@ import SendIcon from '@mui/icons-material/Send';
 import axios from "axios";
 
 
-const Recept = ({ naziv, opis, sastojci, ime, email, prezime }) => {
+const Recept = ({ naziv, opis, sastojci, ime, email, prezime ,ocena}) => {
   const [showAdditionalText, setShowAdditionalText] = useState(false);
   const [showComment, setshowComment] = useState(false);
   const [nacinPripreme, setnacinPripreme] = useState(false);
@@ -107,6 +107,37 @@ const Recept = ({ naziv, opis, sastojci, ime, email, prezime }) => {
     setshowComment(!showComment);
   };
 
+  const postaviOcenu=  async ()=>
+  {
+    try {
+      const obj = {
+        ocena: value,
+        naziv_recepta: naziv,
+        
+        
+      };
+
+      
+      console.log(obj);
+      const response = await axios.post(
+        "http://127.0.0.1:5000/dodajOcenuReceptu",
+        obj,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      console.log("Odgovor od servera:", response.data);
+      // Ovde možete dalje obraditi odgovor sa servera
+    } catch (error) {
+      console.error("Došlo je do greške prilikom slanja zahteva:", error);
+      // Ovde možete obraditi grešku, npr. prikazati korisniku poruku o grešci
+    }
+
+  }
+
 
   const LikeHandler = () => {
     console.log("Lajkovano"); // poziva se metoda za lajk
@@ -119,7 +150,13 @@ const Recept = ({ naziv, opis, sastojci, ime, email, prezime }) => {
         </div>
         <div className="email">{email}</div>
       </div>
-      <div className="status">{naziv}</div>
+      <div className="status">
+  <h2 style={{ display: 'inline-block', marginRight: '10px' }}>{naziv}</h2>
+  <h5 style={{ display: 'inline-block' }}>Trenutna ocena: <span style={{ color: 'red' }}>{ocena}</span>/{5}</h5>
+</div>
+
+
+
 
       <div
  className="custom-link"
@@ -133,7 +170,7 @@ const Recept = ({ naziv, opis, sastojci, ime, email, prezime }) => {
 
 
       {showAdditionalText && (
-        <div className="additional-text dodatni">
+        <div className="additional-text dodatni" >
           <ul>
             {sastojci.map((sastojak, index) => (
               <li key={index}>{sastojak}</li>
@@ -154,19 +191,23 @@ const Recept = ({ naziv, opis, sastojci, ime, email, prezime }) => {
 
       {nacinPripreme && <div className="additional-text dodatni">{opis}</div>}
 
-      <div className="actions" style={{ display: 'flex', alignItems: 'center' }}>
+        <h7 style={{color:'red', marginTop:'20px'}}>Ocenjivanje i komentarisanje</h7>
+      <div className="actions" style={{ display: 'flex', alignItems: 'center', marginTop:'0px'}}>
         <Box
           sx={{
             "& > legend": { mt: 2 },
           }}
         >
+
             <Rating
           name="simple-controlled"
           value={value}
           onChange={handleRatingChange}
         />
         </Box>
-
+        <IconButton>
+      <SendIcon style={{fontSize: 25, color: 'rgb(25, 118, 210)' }} onClick={postaviOcenu}> </SendIcon>
+      </IconButton>
         <IconButton>
         <CommentIcon  onClick={commentHandler}style={{ fontSize: 45, color: 'rgb(25, 118, 210)' }} />
         </IconButton>

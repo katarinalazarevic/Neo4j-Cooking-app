@@ -117,7 +117,7 @@ def receptiKorisnika():
     except Exception as e:
         return str(e), 500
 
-@recept_routes.route('/receptiPoKategoriji')
+@recept_routes.route('/receptiPoKategoriji', methods=['POST'])
 def recepti_po_kategoriji():
     try:
         data=request.get_json()
@@ -270,3 +270,18 @@ def nutritivnaVrednostRecepta():
     
     except Exception as e:
         return str(e), 500
+    
+
+
+
+@recept_routes.route('/trenutnaVrdnostRecepta',methods=['GET'])
+def trenutnaVrdnostRecepta():
+     try:
+        data=request.get_json()
+        recept=data.get("naziv")
+
+
+
+     except Exception as e:
+        return str(e), 500
+    

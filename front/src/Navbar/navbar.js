@@ -15,11 +15,11 @@ import AccountCircle from "@mui/icons-material/AccountCircle";
 import MailIcon from "@mui/icons-material/Mail";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import MoreIcon from "@mui/icons-material/MoreVert";
+import AddIcon from "@mui/icons-material/Add";
+import SendIcon from "@mui/icons-material/Send";
 
-import InputLabel from '@mui/material/InputLabel';
-
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -61,16 +61,50 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-export default function PrimarySearchAppBar() {
+export default function PrimarySearchAppBar({
+  setujFiltriraniRecepti,
+  ucitajsveRecepte,
+}) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
   const [searchValue, setSearchValue] = React.useState("");
 
+  // const [filtriraniRecepte, setfiltriraniRecepte]= React.useState([]);
+
+  const navigate = useNavigate();
+
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
+  const PrebaciNaNovuStranicu = () => {
+    navigate("/dodavanjeRecepta");
+  };
   const handleProfileMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
+  };
+
+  const filtriraj = async () => {
+    if (searchValue == "") {
+      ucitajsveRecepte();
+    } else {
+      try {
+        //  console.log(obj);
+        const response = await axios.post(
+          "http://127.0.0.1:5000/receptiPoKategoriji",
+          {
+            kategorija: searchValue,
+          }
+        );
+
+        console.log("Odgovor od servera:", response.data);
+        setujFiltriraniRecepti(response.data.recepti);
+
+        // Ovde možete dalje obraditi odgovor sa servera
+      } catch (error) {
+        console.error("Došlo je do greške prilikom slanja zahteva:", error);
+        // Ovde možete obraditi grešku, npr. prikazati korisniku poruku o grešci
+      }
+    }
   };
 
   const handleMobileMenuClose = () => {
@@ -79,7 +113,8 @@ export default function PrimarySearchAppBar() {
 
   const handleMenuClose = () => {
     setAnchorEl(null);
-    handleMobileMenuClose();
+    navigate("/home");
+    // handleMobileMenuClose();
   };
 
   const handleMobileMenuOpen = (event) => {
@@ -88,6 +123,11 @@ export default function PrimarySearchAppBar() {
 
   const handleSearchChange = (event) => {
     setSearchValue(event.target.value);
+    console.log(event.target.value);
+    if(event.target.value=='')
+    {
+      ucitajsveRecepte();
+    }
   };
 
   const handleSearchSubmit = (event) => {
@@ -113,8 +153,7 @@ export default function PrimarySearchAppBar() {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+      <MenuItem onClick={handleMenuClose}>Home</MenuItem>
     </Menu>
   );
 
@@ -193,7 +232,7 @@ export default function PrimarySearchAppBar() {
           </Typography>
           <Search>
             <SearchIconWrapper onClick={handleSearchSubmit}>
-              <SearchIcon  />
+              <SearchIcon />
             </SearchIconWrapper>
             <StyledInputBase
               placeholder="Search…"
@@ -207,7 +246,27 @@ export default function PrimarySearchAppBar() {
                 }
               }}
             />
+            <IconButton>
+              <SendIcon
+                style={{ fontSize: 25, color: "rgb(255, 255, 255)" }}
+                onClick={filtriraj}
+              >
+                {" "}
+              </SendIcon>
+            </IconButton>
           </Search>
+
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <p style={{ margin: 0 }} onClick={PrebaciNaNovuStranicu}>
+              Dodaj recept{" "}
+            </p>
+            <AddIcon
+              style={{ marginLeft: "20px" }}
+              size="large"
+              onClick={PrebaciNaNovuStranicu}
+            />
+          </div>
+
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: { xs: "none", md: "flex" } }}>
             <IconButton
@@ -256,7 +315,6 @@ export default function PrimarySearchAppBar() {
       </AppBar>
       {renderMobileMenu}
       {renderMenu}
-      
     </Box>
   );
 }
