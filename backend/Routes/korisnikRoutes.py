@@ -19,11 +19,10 @@ def register():
         # Proveri da li korisnik sa istim email-om već postoji
         existing_user = graph.run("MATCH (k:Korisnik {email: $email}) RETURN k", email=email)
     
-    # Koristi evaluate() da dobiješ prvi rezultat
         existing_user = existing_user.evaluate()
 
         if existing_user:
-            return "Korisnik već postoji sa ovim email-om.", 400  # 400 označava neuspešan zahtev
+            return "Korisnik već postoji sa ovim email-om.", 400  
         
         hashed_sifra = hashpw(sifra.encode('utf-8'), gensalt())
 
@@ -109,7 +108,7 @@ def zapratiKorisnika():
         elif not korisnik2:
             return "Korisnik sa datim email-om ne postoji.", 404
 
-        # Izvodi upit za praćenje korisnika
+        #  upit za praćenje korisnika
         pratilac_query = """
         MATCH (korisnik1:Korisnik {email: $email1}), (korisnik2:Korisnik {email: $email2})
         CREATE (korisnik1)-[:PRAĆENJE]->(korisnik2)
@@ -137,7 +136,7 @@ def otpratiKorisnika():
         elif not korisnik2:
             return "Korisnik sa datim email-om ne postoji.", 404
 
-        # Izvodi upit za otpraćivanje korisnika
+        #upit za otpraćivanje korisnika
         otprati_query = """
         MATCH (korisnik1:Korisnik {email: $email1})-[pracenje:PRAĆENJE]->(korisnik2:Korisnik {email: $email2})
         DELETE pracenje
@@ -155,13 +154,11 @@ def receptiKorisnikaKojePratim():
         data = request.get_json()
         korisnik_email = data.get("korisnik")
 
-        # Provera da li korisnik postoji
         korisnik = graph.run("MATCH (k:Korisnik {email: $email}) RETURN k", email=korisnik_email).data()
 
         if not korisnik:
             return "Korisnik sa datim email-om ne postoji.", 404
 
-        # Izvodi upit za dobijanje recepta koje postavljaju korisnici koje trenutni korisnik prati
         recepti_query = """
         MATCH (korisnik:Korisnik {email: $email})-[:PRAĆENJE]->(praceni:Korisnik)-[:POSTAVLJA]->(recept:Recept)
         RETURN DISTINCT recept

@@ -27,7 +27,6 @@ def dodajKomentar():
         if not recept:
             return "Recept sa datim nazivom ne postoji."
 
-        # Poveži korisnika sa receptom kroz komentar
         povezi_query = "MATCH (k:Korisnik {email: $email}), (r:Recept {naziv: $naziv}), (kom:Komentar {sadrzaj:$sadrzaj}) " \
                        "CREATE (k)-[:OSTAVLJA]->(kom)-[:ZA]->(r)"
         graph.run(povezi_query, email=korisnik_email, naziv=naziv_recepta,sadrzaj=sadrzaj)
@@ -35,7 +34,7 @@ def dodajKomentar():
         return "Komentar uspešno dodat."
     
     except Exception as e:
-        return str(e), 500  # 500 označava internu serversku grešku
+        return str(e), 500  
 
 from py2neo import Node, Relationship
 
@@ -82,7 +81,6 @@ def komentariKorisnika():
         result = graph.run("MATCH (k:Korisnik {email: $korisnik_email})-[:OSTAVLJA]->(kom:Komentar)-[:ZA]->(r:Recept) RETURN kom, r", korisnik_email=korisnik_email)
         komentari = [record["kom"]["sadrzaj"] for record in result]
 
-        # Vraćamo rezultat u JSON formatu
         return dumps({"komentari": komentari}), 200, {'Content-Type': 'application/json'}
     except Exception as e:
         return f"Greška prilikom dohvatanja komentara korisnika: {str(e)}", 500

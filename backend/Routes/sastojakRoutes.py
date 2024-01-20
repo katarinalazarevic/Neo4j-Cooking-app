@@ -27,7 +27,7 @@ def dodajSastojak():
         
         return "Sastojak uspešno dodat."
     except Exception as e:
-        return str(e), 500  # 500 označava internu serversku grešku
+        return str(e), 500  
 
     
 @sastojak_routes.route('/obrisiSastojak', methods=["DELETE"])
@@ -42,7 +42,6 @@ def obrisiSastojak():
         if not existing_sastojak:
             return "Sastojak sa datim nazivom ne postoji.", 404
 
-        # Delete the Sastojak
         graph.run("MATCH (s:Sastojak {naziv: $naziv}) DELETE s", naziv=naziv)
 
         return "Sastojak uspešno obrisan.", 200
@@ -122,14 +121,12 @@ def nutritivneVrednostiSastojka():
         if not sastojak_info:
             return {"error": "Sastojak nije pronadjen"}, 404
 
-        # Izdvojimo potrebne informacije iz sastojak_info
         naziv = sastojak_info["naziv"]
         kalorijska_vrednost = sastojak_info["kalorijska_vrednost"]
         proteini = sastojak_info["proteini"]
         masti = sastojak_info["masti"]
         ugljeni_hidrati = sastojak_info["ugljeni_hidrati"]
 
-        # Vraćanje rezultata kao JSON objekta u odgovoru
         return jsonify({
             "Naziv": naziv,
             "Kalorijska vrednost": kalorijska_vrednost,

@@ -21,11 +21,9 @@ def dodajRecept():
     if existing_recept:
         return "Recept sa datim nazivom već postoji."
 
-    # Kreiraj novi recept
     recept = Node("Recept", naziv=naziv, sastojci=sastojci, opis_pripreme=opis, kategorija=kategorija, ocena=0,broj_ocena=0)
     graph.create(recept)
 
-    # Poveži korisnika sa receptom
     povezi_query = "MATCH (k:Korisnik {email: $email}), (r:Recept {naziv: $naziv}) " \
                    "CREATE (k)-[:POSTAVLJA]->(r)"
     graph.run(povezi_query, email=korisnik_email, naziv=naziv)
@@ -169,11 +167,6 @@ def receptiPoCeni():
             sastojci = record.get("sastojci")
 
             if recept and sastojci:
-                print(f"Recept: {recept}")
-                print(f"Sastojci: {sastojci}")
-
-                # Dodajte dodatne provere ili ispisivanje podataka po potrebi
-
                 recepti_sastojci.append((recept, sastojci))
             else:
                 print(f"I preskačem zapis zbog nedostajućih podataka. Zapis: {record}")
@@ -214,7 +207,7 @@ def dodajOcenuReceptu():
         nova_ocena = data.get("ocena")
         naziv_recepta = data.get("naziv_recepta")
         nova_ocena=(float)(nova_ocena)
-        # Proveri da li postoji recept sa datim nazivom
+
         existing_recept = graph.run("MATCH (r:Recept {naziv: $naziv_recepta}) RETURN r", naziv_recepta=naziv_recepta)
         existing_recept = existing_recept.evaluate()
 
@@ -230,7 +223,6 @@ def dodajOcenuReceptu():
             nova_ocena = (trenutna_ocena + nova_ocena) / 2
         
 
-        # Ažuriraj vrednost ocene i broj ocena u čvoru Recept
         query = """
         MATCH (r:Recept {naziv: $naziv_recepta})
         SET r.ocena = $nova_ocena
@@ -285,8 +277,6 @@ def nutritivnaVrednostRecepta():
             sumM+=kolicina*m/100
             sumP+=kolicina*p/100
             print("suma", sumKCAL)
-
-        # Nastavite sa ostatkom koda...
 
         return jsonify({
             "SumKCAL": sumKCAL,
