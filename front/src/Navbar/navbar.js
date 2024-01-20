@@ -143,22 +143,22 @@ export default function PrimarySearchAppBar({
     };
 
        try {
-        //   const response = await axios.post('http://127.0.0.1:5000/receptiKorisnika',
-        //  {
-        //    obj
-        //   },
-        //   {
-        //     headers:{
-        //         "Content-Type": "application/json",
-        //     }
-        //   }
-        //   );
-        //   console.log(response.data);
+          const response = await axios.post('http://127.0.0.1:5000/receptiPoCeni',
+         {
+           obj
+          },
+          {
+            headers:{
+                "Content-Type": "application/json",
+            }
+          }
+          );
+          console.log(response.data);
 
-          //setujFiltriraniRecepti(response.data.NESTO);
+          setujFiltriraniRecepti(response.data.recepti);
 
-        //  setRecepti(response.data.recepti);
-          // Ovdje možete obraditi odgovor od servera
+         //setRecepti(response.data.recepti);
+         // Ovdje možete obraditi odgovor od servera
         } catch (error) {
           console.error("Došlo je do greške prilikom dohvaćanja proizvoda:", error);
         }
