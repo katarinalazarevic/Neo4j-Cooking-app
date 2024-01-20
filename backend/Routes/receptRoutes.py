@@ -139,6 +139,7 @@ def receptiPoCeni():
         cenaDo=data.get("cenaDo")
         if cenaOd is None:
             cenaOd=0
+        print(cenaOd,cenaDo)
         result = graph.run("MATCH (r:Recept) RETURN r")
         recepti = [record["r"] for record in result]
         ukupna_cena=0
@@ -150,7 +151,22 @@ def receptiPoCeni():
         """
 
         result = graph.run(query)
-        recepti_sastojci = [(record["r"], record["s"]) for record in result]
+        recepti_sastojci = []
+
+        for record in result:
+            recept = record.get("r")
+            sastojci = record.get("sastojci")
+
+            if recept and sastojci:
+                print(f"Recept: {recept}")
+                print(f"Sastojci: {sastojci}")
+
+                # Dodajte dodatne provere ili ispisivanje podataka po potrebi
+
+                recepti_sastojci.append((recept, sastojci))
+            else:
+                print(f"I preskačem zapis zbog nedostajućih podataka. Zapis: {record}")
+
         print(recepti_sastojci)
         odgovarajuci_recepti=[]
         for recept, sastojak in recepti_sastojci:
