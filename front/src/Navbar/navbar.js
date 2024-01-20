@@ -20,6 +20,7 @@ import SendIcon from "@mui/icons-material/Send";
 
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { InputAdornment, TextField } from "@mui/material";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -68,6 +69,9 @@ export default function PrimarySearchAppBar({
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
   const [searchValue, setSearchValue] = React.useState("");
+
+  const [donjaGranica, setDonjaGranica] = React.useState('');
+  const [gornjaGranica, setGornjaGranica] = React.useState('');
 
   // const [filtriraniRecepte, setfiltriraniRecepte]= React.useState([]);
 
@@ -124,11 +128,43 @@ export default function PrimarySearchAppBar({
   const handleSearchChange = (event) => {
     setSearchValue(event.target.value);
     console.log(event.target.value);
-    if(event.target.value=='')
-    {
+    if (event.target.value == "") {
       ucitajsveRecepte();
     }
   };
+
+ const receptiPoCeniHandler = async  () => {
+    console.log('Donja granica:', donjaGranica);
+    console.log('Gornja granica:', gornjaGranica);
+    console.log("proba", gornjaGranica==0);
+    const obj={
+      cenaOd:donjaGranica,
+      cenaDo:gornjaGranica
+    };
+
+       try {
+        //   const response = await axios.post('http://127.0.0.1:5000/receptiKorisnika',
+        //  {
+        //    obj
+        //   },
+        //   {
+        //     headers:{
+        //         "Content-Type": "application/json",
+        //     }
+        //   }
+        //   );
+        //   console.log(response.data);
+
+          //setujFiltriraniRecepti(response.data.NESTO);
+
+        //  setRecepti(response.data.recepti);
+          // Ovdje možete obraditi odgovor od servera
+        } catch (error) {
+          console.error("Došlo je do greške prilikom dohvaćanja proizvoda:", error);
+        }
+      };
+  
+  
 
   const handleSearchSubmit = (event) => {
     event.preventDefault();
@@ -235,6 +271,7 @@ export default function PrimarySearchAppBar({
               <SearchIcon />
             </SearchIconWrapper>
             <StyledInputBase
+            style={{width:'150px'}}
               placeholder="Search…"
               inputProps={{ "aria-label": "search" }}
               onChange={handleSearchChange}
@@ -257,15 +294,50 @@ export default function PrimarySearchAppBar({
           </Search>
 
           <div style={{ display: "flex", alignItems: "center" }}>
-            <p style={{ margin: 0 }} onClick={PrebaciNaNovuStranicu}>
-              Dodaj recept{" "}
-            </p>
-            <AddIcon
-              style={{ marginLeft: "20px" }}
-              size="large"
-              onClick={PrebaciNaNovuStranicu}
-            />
+            <p style={{ margin: 0 }}>Dodaj recept </p>
+            <IconButton>
+              <AddIcon
+                style={{ marginLeft: "2px", color:'white' }}
+                size="large"
+                onClick={PrebaciNaNovuStranicu}
+              />
+            </IconButton>
           </div>
+
+          <TextField 
+           style={{width:'200px'}}
+        label="Donja granica"
+        sx={{ m: 1, width: "25ch" }}
+        InputProps={{
+          startAdornment: (
+            <InputAdornment position="start" style={{ marginLeft: "2px", color: 'white' }}>rsd</InputAdornment>
+          ),
+        }}
+        value={donjaGranica}
+        onChange={(e) => setDonjaGranica(e.target.value)}
+      />
+
+      <TextField
+       style={{width:'200px'}}
+        label="Gornja granica"
+        sx={{ m: 1, width: "25ch" }}
+        InputProps={{
+          startAdornment: (
+            <InputAdornment position="start">rsd</InputAdornment>
+          ),
+        }}
+        value={gornjaGranica}
+        onChange={(e) => setGornjaGranica(e.target.value)}
+      />
+
+          <IconButton>
+            <SendIcon
+              style={{ fontSize: 25, color: "rgb(255, 255, 255)" }}
+              onClick={receptiPoCeniHandler}
+            >
+             
+            </SendIcon>
+          </IconButton>
 
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: { xs: "none", md: "flex" } }}>

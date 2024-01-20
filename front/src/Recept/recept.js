@@ -15,7 +15,7 @@ import SendIcon from '@mui/icons-material/Send';
 import axios from "axios";
 
 
-const Recept = ({ naziv, opis, sastojci, ime, email, prezime ,ocena}) => {
+const Recept = ({ naziv, opis, sastojci, ime, email, prezime ,ocena, recept}) => {
   const [showAdditionalText, setShowAdditionalText] = useState(false);
   const [showComment, setshowComment] = useState(false);
   const [nacinPripreme, setnacinPripreme] = useState(false);
@@ -139,9 +139,7 @@ const Recept = ({ naziv, opis, sastojci, ime, email, prezime ,ocena}) => {
   }
 
 
-  const LikeHandler = () => {
-    console.log("Lajkovano"); // poziva se metoda za lajk
-  };
+
   return (
     <div className="profile">
       <div className="pocetni">
@@ -153,6 +151,8 @@ const Recept = ({ naziv, opis, sastojci, ime, email, prezime ,ocena}) => {
       <div className="status">
   <h2 style={{ display: 'inline-block', marginRight: '10px' }}>{naziv}</h2>
   <h5 style={{ display: 'inline-block' }}>Trenutna ocena: <span style={{ color: 'red' }}>{ocena}</span>/{5}</h5>
+  <p syle={{margin:'0px', padding:'0px'}}> Kategorija recepta:  <span style={{ color: 'red' }}>{recept.kategorija}</span></p>
+
 </div>
 
 

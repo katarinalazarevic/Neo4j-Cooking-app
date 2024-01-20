@@ -131,7 +131,7 @@ def recepti_po_kategoriji():
     except Exception as e:
         return str(e), 500
     
-@recept_routes.route('/receptiPoCeni')
+@recept_routes.route('/receptiPoCeni', methods=["POST"])
 def receptiPoCeni():
     try:
         data=request.get_json()

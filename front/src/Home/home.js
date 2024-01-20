@@ -66,6 +66,7 @@ const Home= ()=>
             email={storedUsername}
             prezime={storedPrezime}
             ocena={recept.ocena}
+            recept={recept}
           />
         ))}
       </div>
