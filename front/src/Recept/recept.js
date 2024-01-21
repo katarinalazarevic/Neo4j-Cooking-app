@@ -80,7 +80,7 @@ const Recept = ({
         }
       );
 
-      console.log(response.data); // Ovde možeš raditi nešto sa odgovorom iz servera
+      console.log(response.data); 
       window.confirm("Komentar uspesno dodat!");
     } catch (error) {
       console.error("Greška prilikom slanja zahteva:", error);
@@ -101,7 +101,7 @@ const Recept = ({
 
   const handleRatingChange = (event, newValue) => {
     setValue(newValue);
-    // Ovde možeš odštampati vrednost ocene na konzoli
+   
     console.log("Nova vrednost ocene:", newValue);
   };
 
@@ -135,10 +135,10 @@ const Recept = ({
 
       console.log("Odgovor od servera:", response.data);
       window.confirm("Uspesno ste zapratili korisnika ", email);
-      // Ovde možete dalje obraditi odgovor sa servera
+     
     } catch (error) {
       console.error("Došlo je do greške prilikom slanja zahteva:", error);
-      // Ovde možete obraditi grešku, npr. prikazati korisniku poruku o grešci
+    
     }
 
 
@@ -162,11 +162,13 @@ const Recept = ({
         }
       );
 
-      console.log("Odgovor od servera:", response.data);
-      // Ovde možete dalje obraditi odgovor sa servera
+     
+      window.confirm("Uspesno dodata ocena!");
+      
     } catch (error) {
       console.error("Došlo je do greške prilikom slanja zahteva:", error);
-      // Ovde možete obraditi grešku, npr. prikazati korisniku poruku o grešci
+      
+    
     }
   };
 
@@ -298,7 +300,7 @@ const Recept = ({
       <div
         className="custom-link"
         onClick={AllComentsHandler}
-        /* Dodaj funkcionalnost koja treba da se izvrši kada se klikne na "Sastojci" */
+       
 
         style={{ cursor: "pointer", color: "black", marginBottom: "10px" }}
       >
@@ -306,21 +308,28 @@ const Recept = ({
       </div>
 
       <div className="commentsWrapper">
-        {showALLComments && (
-          <div className="commentsContainer1">
-            {komentari.map((komentar, index) => (
-              <div key={index} className="commentContainer">
-                <h6 style={{ color: "black", margin: "0" }}>
-                  {komentar.korisnik_email}
-                </h6>
-                <h3 style={{ color: "black", margin: "0" }}>
-                  {komentar.sadrzaj}
-                </h3>
-              </div>
-            ))}
+  {showALLComments && (
+    <div className="commentsContainer1">
+      {komentari.length > 0 ? (
+       
+        komentari.map((komentar, index) => (
+          <div key={index} className="commentContainer">
+            <h6 style={{ color: "black", margin: "0" }}>
+              {komentar.korisnik_email}
+            </h6>
+            <h3 style={{ color: "black", margin: "0" }}>
+              {komentar.sadrzaj}
+            </h3>
           </div>
-        )}
-      </div>
+        ))
+      ) : (
+     
+        <p style={{ color: "black" }}>Ovaj recept nema komentare.</p>
+      )}
+    </div>
+  )}
+</div>
+
     </div>
   );
 };

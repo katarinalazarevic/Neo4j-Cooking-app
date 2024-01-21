@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./dodavanjeRecepta.css"; // Uvoz CSS fajla
 import axios from "axios";
-import { Checkbox, FormControlLabel, Input, TextField } from "@mui/material";
+import { Button, Checkbox, FormControlLabel, Input, TextField } from "@mui/material";
 import { CheckBox } from "@mui/icons-material";
 import PrimarySearchAppBar from "../Navbar/navbar";
 
@@ -22,9 +22,6 @@ function DodavanjeRecepte() {
   const nazivRecepta = (event) => {
     setInputValue(event.target.value);
   };
-
-  
-
 
   const vratiRecepte = async () => {
     try {
@@ -49,8 +46,10 @@ function DodavanjeRecepte() {
   };
 
   const handleDodajRecept = async () => {
-      const formatiraniSastojci = selektovaniSastojci.map(({ naziv, kolicina }) => `${kolicina}gr ${naziv}`);
-      console.log(formatiraniSastojci);
+    const formatiraniSastojci = selektovaniSastojci.map(
+      ({ naziv, kolicina }) => `${kolicina}gr ${naziv}`
+    );
+    console.log(formatiraniSastojci);
     try {
       const obj = {
         naziv: inputValue,
@@ -60,7 +59,6 @@ function DodavanjeRecepte() {
         email: storedUsername,
       };
 
-      
       console.log(obj);
       const response = await axios.post(
         "http://127.0.0.1:5000/dodajRecept",
@@ -82,20 +80,21 @@ function DodavanjeRecepte() {
 
   const handleInputChange = (naziv, kolicina) => {
     setSelektovaniSastojci((prevSelektovani) => {
-        const updatedSastojci = prevSelektovani.map((prevSastojak) =>
-            prevSastojak.naziv === naziv ? { ...prevSastojak, kolicina } : prevSastojak
-        );
-        return updatedSastojci;
+      const updatedSastojci = prevSelektovani.map((prevSastojak) =>
+        prevSastojak.naziv === naziv
+          ? { ...prevSastojak, kolicina }
+          : prevSastojak
+      );
+      return updatedSastojci;
     });
-};
+  };
 
-  
   const handleCheckboxChange = (naziv, kolicina) => {
     setSelektovaniSastojci((prevSelektovani) => {
       const isChecked = prevSelektovani.some(
         (prevSastojak) => prevSastojak.naziv === naziv
       );
-  
+
       if (isChecked) {
         // Ako je sastojak već selektovan, uklonite ga iz niza
         return prevSelektovani.filter((sastojak) => sastojak.naziv !== naziv);
@@ -105,7 +104,6 @@ function DodavanjeRecepte() {
       }
     });
   };
-  
 
   const opisHandler = (event) => {
     setopisPripreme(event.target.value);
@@ -116,76 +114,79 @@ function DodavanjeRecepte() {
   };
 
   return (
-
-   <div>     <PrimarySearchAppBar> </PrimarySearchAppBar>
-
-    <div className="unos-podataka-forma">
-      <Input
-        aria-label="Demo input"
-        placeholder="Naziv recepta"
-        value={inputValue}
-        onChange={nazivRecepta}
-      />
-
-      <TextField
-        id="outlined-multiline-flexible"
-        label="Komentar o receptu"
-        multiline
-        maxRows={4}
-        value={opisPripreme}
-        onChange={opisHandler}
-      />
-
-      <label htmlFor="sastojci">Sastojci:</label>
-      {sastojci.map((sastojak, index) => (
-  <div key={index} style={{ display: "flex", alignItems: "center" }}>
-   <TextField
-  id={`outlined-number-${index}`}
-  label="Number"
-  type="number"
-  InputLabelProps={{
-    shrink: true,
-  }}
-  style={{ width: "80px", marginRight: "8px" }}
-  value={
-    selektovaniSastojci.find(
-      (prevSastojak) => prevSastojak.naziv === sastojak.naziv
-    )?.kolicina ?? ""
-  }
-  onChange={(e) =>
-    handleInputChange(sastojak.naziv, parseInt(e.target.value, 10) || "")
-  }
-/>
-
-    <FormControlLabel
-      control={
-        <Checkbox
-          checked={selektovaniSastojci.some(
-            (prevSastojak) => prevSastojak.naziv === sastojak.naziv
-          )}
-          onChange={() => handleCheckboxChange(sastojak.naziv, 0)} // Ovde možete postaviti početnu vrednost količine ako je potrebno
+    <div>
+      {" "}
+      <PrimarySearchAppBar> </PrimarySearchAppBar>
+      <div className="unos-podataka-forma">
+        <Input
+         className="margin"
+          aria-label="Demo input"
+          placeholder="Naziv recepta"
+          value={inputValue}
+          onChange={nazivRecepta}
         />
-      }
-      label={sastojak.naziv}
-    />
-  </div>
-))}
 
+        <TextField
+          id="outlined-multiline-flexible"
+          label="Opisite kratko nacin pripreme recepta"
+          multiline
+          maxRows={4}
+          value={opisPripreme}
+          onChange={opisHandler}
+        />
 
+        <label htmlFor="sastojci">Sastojci:</label>
+        {sastojci.map((sastojak, index) => (
+          <div key={index} style={{ display: "flex", alignItems: "center" }}>
+            <TextField
+              id={`outlined-number-${index}`}
+              label="Number"
+              type="number"
+              InputLabelProps={{
+                shrink: true,
+              }}
+              style={{ width: "80px", marginRight: "8px" }}
+              value={
+                selektovaniSastojci.find(
+                  (prevSastojak) => prevSastojak.naziv === sastojak.naziv
+                )?.kolicina ?? ""
+              }
+              onChange={(e) =>
+                handleInputChange(
+                  sastojak.naziv,
+                  parseInt(e.target.value, 10) || ""
+                )
+              }
+            />
 
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={selektovaniSastojci.some(
+                    (prevSastojak) => prevSastojak.naziv === sastojak.naziv
+                  )}
+                  onChange={() => handleCheckboxChange(sastojak.naziv, 0)}  
+                />
+              }
+              label={sastojak.naziv}
+            />
+          </div>
+        ))}
 
+        <Input
+        className="margin"
+          aria-label="Demo input"
+          placeholder="Kategorija recepta"
+          value={kategorija}
+          onChange={kategorijaHandler}
+        />
 
-
-      <Input
-        aria-label="Demo input"
-        placeholder="Kategorija"
-        value={kategorija}
-        onChange={kategorijaHandler}
-      />
-
-      <button onClick={handleDodajRecept}>Potvrdi</button>
-    </div>
-
+       {/* <div> <button className="primary" onClick={handleDodajRecept}>Potvrdi</button> </div> */}
+      <div> <Button variant="outlined" size="medium"  onClick={handleDodajRecept} className="dugme" >
+          Dodaj recept
+        </Button>
+        </div>
+      </div>
     </div>
   );
 }

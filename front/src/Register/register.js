@@ -11,9 +11,7 @@ const  Register = () =>
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [datum,setDatum]= useState("");
-//   const [grad, setGrad] = useState("");
-//   const [ulica, setulica] = useState("");
-//   const [broj, setBroj] = useState("");
+
 
   const RegisterHandler= async (event)=>
   {
@@ -123,14 +121,13 @@ const  Register = () =>
 
             <div className="rem-forgot">
               <div className="rem">
-                <input type="checkbox" id="rem-tik" />
-                <label htmlFor="rem-tik">Remember me</label>
+               
               </div>
-              <span><a href="#">Forgot password</a></span>
+            
             </div>
             <button  className="btn" onClick={RegisterHandler}>Register</button>
           </form>
-          <p className="footer" onClick={LoginHandler}>Vec imate akaunt?  <a href="#">Login</a></p>
+          <p className="footer" onClick={LoginHandler} style={{color:'white'}} >Vec imate akaunt?  <a href="#" style={{color:'white'}}>Login</a></p>
         </div>
       </div>
     );

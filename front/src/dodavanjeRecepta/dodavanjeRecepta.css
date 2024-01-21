@@ -1,6 +1,7 @@
 .unos-podataka-forma {
     max-width: 400px;
     margin: auto;
+    margin-top: 100px;
     padding: 20px;
     border: 1px solid #ccc;
     border-radius: 8px;
@@ -13,7 +14,16 @@
     display: block;
     margin-bottom: 8px;
   }
+  .margin
+  {
+    margin-top: 20px;
+    margin-bottom: 10px;
+  }
   
+  .dugme{
+
+    margin-top: 20px;
+  }
   .unos-podataka-forma input,
   .unos-podataka-forma textarea {
     width: 100%;

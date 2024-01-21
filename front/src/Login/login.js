@@ -7,26 +7,17 @@ import "./login.css";
 
 import "../api/axios";
 
-
-
 const Login = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  
-
-
-
   const [error, setError] = useState(false);
-  const [errMsg, setErrMsg] = useState("");
-  const [success, setSuccess] = useState(false);
 
   const emailRef = useRef(null);
   const passwordRef = useRef(null);
 
   const handleRegisterClick = () => {
-    // Navigacija na '/Register' rutu
     navigate("/Register");
   };
 
@@ -44,16 +35,16 @@ const Login = () => {
 
   const LoginHandler = async (event) => {
     event.preventDefault();
-    // Dobijanje vrednosti iz ref objekata
+
     const emailValue = emailRef.current.value;
     const passwordValue = passwordRef.current.value;
 
     setEmail(emailValue);
     setPassword(passwordValue);
-    
-   
+
     try {
-      const response = await axios.post('http://127.0.0.1:5000/login',
+      const response = await axios.post(
+        "http://127.0.0.1:5000/login",
         {
           email: emailValue,
           sifra: passwordValue,
@@ -61,7 +52,6 @@ const Login = () => {
         {
           headers: {
             "Content-Type": "application/json",
-            // Dodajte dodatne zaglavlja ako su potrebna (npr. autorizacija)
           },
         }
       );
@@ -71,30 +61,25 @@ const Login = () => {
       if (response.status === 200) {
         if (response.data.message === "SUCCESS") {
           console.log("Poruka o uspešnoj prijavi:", response.data.message);
-          localStorage.setItem('username', emailValue);
-          localStorage.setItem('ime', response.data.korisnik.ime)
-          localStorage.setItem('prezime', response.data.korisnik.prezime)
-         
+          localStorage.setItem("username", emailValue);
+          localStorage.setItem("ime", response.data.korisnik.ime);
+          localStorage.setItem("prezime", response.data.korisnik.prezime);
+
           return navigate("/Home");
         } else {
           console.log(
             "Neuspešna prijava! Status kod 200, ali prijava neuspešna."
           );
           window.confirm("Neuspešna prijava!");
-         
         }
       } else {
         console.log("Neuspešna prijava! Status kod nije 200.");
         window.confirm("Neuspešna prijava!");
-       
       }
     } catch (error) {
-      // Uhvatite i obradite grešku ako se desi, ovo se odnosi na greške koje nisu vezane za statusni kod odgovora (npr. problem sa mrežom, itd.)
       console.error("Došlo je do greške prilikom prijave:", error);
       window.confirm("Neuspešna prijava!");
-    
     }
-    
   };
 
   const stampajVrednosti = (event) => {
@@ -104,9 +89,7 @@ const Login = () => {
   };
 
   return (
-    
     <div>
-     
       <div id="algn1">
         <div id="container">
           <p className="head">Login</p>
@@ -131,14 +114,10 @@ const Login = () => {
             />
             <div className="rem-forgot">
               <div className="rem">
-                <input type="checkbox" id="rem-tik" />
-                <label htmlFor="rem-tik">Remember me</label>
+              
+                
               </div>
-              <span>
-                <a href="#" onClick={stampajVrednosti}>
-                  Forgot password
-                </a>
-              </span>
+             
             </div>
             <button type="submit" className="btn" onClick={LoginHandler}>
               Login
@@ -154,7 +133,6 @@ const Login = () => {
         </div>
       </div>
     </div>
-  
   );
 };
 
