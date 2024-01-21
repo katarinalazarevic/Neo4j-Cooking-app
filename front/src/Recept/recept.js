@@ -11,52 +11,57 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import Box from "@mui/material/Box";
 import Rating from "@mui/material/Rating";
 import Typography from "@mui/material/Typography";
-import SendIcon from '@mui/icons-material/Send';
+import SendIcon from "@mui/icons-material/Send";
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import axios from "axios";
 
-
-const Recept = ({ naziv, opis, sastojci, ime, email, prezime ,ocena, recept}) => {
+const Recept = ({
+  naziv,
+  opis,
+  sastojci,
+  ime,
+  email,
+  prezime,
+  ocena,
+  recept,
+}) => {
   const [showAdditionalText, setShowAdditionalText] = useState(false);
   const [showComment, setshowComment] = useState(false);
   const [nacinPripreme, setnacinPripreme] = useState(false);
   const [value, setValue] = React.useState(2);
-  const [commentText, setCommentText] = useState('');
+  const [commentText, setCommentText] = useState("");
   const [komentari, setKomentari] = useState([]);
-  const [showALLComments, setshowALLComments]= useState(false);
+  const [showALLComments, setshowALLComments] = useState(false);
 
   //console.log(recept.recept.sastojci);
+  const storedUsername = localStorage.getItem('username');
 
-  useEffect(()=>
-  {
-      ucitajKomentareRecepta();
-     // console.log("email je", email );
-  },[])
+  useEffect(() => {
+    ucitajKomentareRecepta();
+    // console.log("email je", email );
+  }, []);
 
-
-  const ucitajKomentareRecepta = async ()=>
-  {
-      try{
-          const response= await axios.post(
-            "http://127.0.0.1:5000/komentariZaRecept",
-            {
-              naziv_recepta: naziv
-            },
-            {
-              headers: {
-                "Content-Type": "application/json",
-              }
-            }
-          );
-          console.log(response.data);
-          setKomentari(response.data.komentari)
-      }
-      catch(error)
-      {
-        console.error(error);
-      }
+  const ucitajKomentareRecepta = async () => {
+    try {
+      const response = await axios.post(
+        "http://127.0.0.1:5000/komentariZaRecept",
+        {
+          naziv_recepta: naziv,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log(response.data);
+      setKomentari(response.data.komentari);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
-  const handleSendClick =  async ()  => {
+  const handleSendClick = async () => {
     // Ovde možeš ispisati vrednost unetu u TextField u konzoli
     console.log(commentText);
 
@@ -66,7 +71,7 @@ const Recept = ({ naziv, opis, sastojci, ime, email, prezime ,ocena, recept}) =>
         {
           korisnik_email: email,
           sadrzaj: commentText,
-          naziv_recepta: naziv
+          naziv_recepta: naziv,
         },
         {
           headers: {
@@ -74,20 +79,17 @@ const Recept = ({ naziv, opis, sastojci, ime, email, prezime ,ocena, recept}) =>
           },
         }
       );
-  
+
       console.log(response.data); // Ovde možeš raditi nešto sa odgovorom iz servera
       window.confirm("Komentar uspesno dodat!");
     } catch (error) {
       console.error("Greška prilikom slanja zahteva:", error);
     }
-
-    
   };
 
-  const AllComentsHandler= ()=>
-  {
+  const AllComentsHandler = () => {
     setshowALLComments(!showALLComments);
-  }
+  };
 
   const handleLabelClick = () => {
     setShowAdditionalText(!showAdditionalText);
@@ -100,25 +102,55 @@ const Recept = ({ naziv, opis, sastojci, ime, email, prezime ,ocena, recept}) =>
   const handleRatingChange = (event, newValue) => {
     setValue(newValue);
     // Ovde možeš odštampati vrednost ocene na konzoli
-    console.log('Nova vrednost ocene:', newValue);
+    console.log("Nova vrednost ocene:", newValue);
   };
 
-  const commentHandler= ()=>
-  {
+  const commentHandler = () => {
     setshowComment(!showComment);
   };
 
-  const postaviOcenu=  async ()=>
+  const followHandler=  async ()=>
   {
+    console.log(email);
+    console.log(storedUsername);
+
+    const obj ={
+      korisnik1:storedUsername,
+      korisnik2:email
+    };
+
+    try {
+      
+
+      console.log(obj);
+      const response = await axios.post(
+        "http://127.0.0.1:5000/zapratiKorisnika",
+        obj,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      console.log("Odgovor od servera:", response.data);
+      window.confirm("Uspesno ste zapratili korisnika ", email);
+      // Ovde možete dalje obraditi odgovor sa servera
+    } catch (error) {
+      console.error("Došlo je do greške prilikom slanja zahteva:", error);
+      // Ovde možete obraditi grešku, npr. prikazati korisniku poruku o grešci
+    }
+
+
+
+  };
+  const postaviOcenu = async () => {
     try {
       const obj = {
         ocena: value,
         naziv_recepta: naziv,
-        
-        
       };
 
-      
       console.log(obj);
       const response = await axios.post(
         "http://127.0.0.1:5000/dodajOcenuReceptu",
@@ -136,42 +168,49 @@ const Recept = ({ naziv, opis, sastojci, ime, email, prezime ,ocena, recept}) =>
       console.error("Došlo je do greške prilikom slanja zahteva:", error);
       // Ovde možete obraditi grešku, npr. prikazati korisniku poruku o grešci
     }
-
-  }
-
-
+  };
 
   return (
     <div className="profile">
       <div className="pocetni">
-        <div className="name">
+        <div className="name" style={{ display: "flex" }}>
           {ime} {prezime}{" "}
+          <p   className="follow-text" 
+          style={{ marginLeft: "10px", marginTop: "7px", fontSize: "12px",color:'black' }} onClick={followHandler}>
+
+            Follow
+          </p>
+         
         </div>
+
         <div className="email">{email}</div>
       </div>
       <div className="status">
-  <h2 style={{ display: 'inline-block', marginRight: '10px' }}>{naziv}</h2>
-  <h5 style={{ display: 'inline-block' }}>Trenutna ocena: <span style={{ color: 'red' }}>{ocena}</span>/{5}</h5>
-  <p syle={{margin:'0px', padding:'0px'}}> Kategorija recepta:  <span style={{ color: 'red' }}>{recept.kategorija}</span></p>
-
-</div>
-
-
-
+        <h2 style={{ display: "inline-block", marginRight: "10px" }}>
+          {naziv}
+        </h2>
+        <h5 style={{ display: "inline-block" }}>
+          Trenutna ocena: <span style={{ color: "red" }}>{ocena}</span>/{5}
+        </h5>
+        <p syle={{ margin: "0px", padding: "0px" }}>
+          {" "}
+          Kategorija recepta:{" "}
+          <span style={{ color: "red" }}>{recept.kategorija}</span>
+        </p>
+      </div>
 
       <div
- className="custom-link"
-  onClick={handleLabelClick}
-    /* Dodaj funkcionalnost koja treba da se izvrši kada se klikne na "Sastojci" */
-  
-  style={{ cursor: 'pointer', color: 'black' }}
->
-  {"Sastojci"} <KeyboardArrowDownIcon />
-</div>
+        className="custom-link"
+        onClick={handleLabelClick}
+        /* Dodaj funkcionalnost koja treba da se izvrši kada se klikne na "Sastojci" */
 
+        style={{ cursor: "pointer", color: "black" }}
+      >
+        {"Sastojci"} <KeyboardArrowDownIcon />
+      </div>
 
       {showAdditionalText && (
-        <div className="additional-text dodatni" >
+        <div className="additional-text dodatni">
           <ul>
             {sastojci.map((sastojak, index) => (
               <li key={index}>{sastojak}</li>
@@ -180,45 +219,62 @@ const Recept = ({ naziv, opis, sastojci, ime, email, prezime ,ocena, recept}) =>
         </div>
       )}
 
-<div
- className="custom-link"
-  onClick={nacinPripremeHandler}
-    /* Dodaj funkcionalnost koja treba da se izvrši kada se klikne na "Sastojci" */
-  
-  style={{ cursor: 'pointer', color: 'black' }}
->
-  {"Nacin pripreme"} <KeyboardArrowDownIcon />
-</div>
+      <div
+        className="custom-link"
+        onClick={nacinPripremeHandler}
+        /* Dodaj funkcionalnost koja treba da se izvrši kada se klikne na "Sastojci" */
+
+        style={{ cursor: "pointer", color: "black" }}
+      >
+        {"Nacin pripreme"} <KeyboardArrowDownIcon />
+      </div>
 
       {nacinPripreme && <div className="additional-text dodatni">{opis}</div>}
 
-        <h7 style={{color:'red', marginTop:'20px'}}>Ocenjivanje i komentarisanje</h7>
-      <div className="actions" style={{ display: 'flex', alignItems: 'center', marginTop:'0px'}}>
+      <h7 style={{ color: "red", marginTop: "20px" }}>
+        Ocenjivanje i komentarisanje
+      </h7>
+      <div
+        className="actions"
+        style={{ display: "flex", alignItems: "center", marginTop: "0px" }}
+      >
         <Box
           sx={{
             "& > legend": { mt: 2 },
           }}
         >
-
-            <Rating
-          name="simple-controlled"
-          value={value}
-          onChange={handleRatingChange}
-        />
+          <Rating
+            name="simple-controlled"
+            value={value}
+            onChange={handleRatingChange}
+          />
         </Box>
         <IconButton>
-      <SendIcon style={{fontSize: 25, color: 'rgb(25, 118, 210)' }} onClick={postaviOcenu}> </SendIcon>
-      </IconButton>
-        <IconButton>
-        <CommentIcon  onClick={commentHandler}style={{ fontSize: 45, color: 'rgb(25, 118, 210)' }} />
+          <SendIcon
+            style={{ fontSize: 25, color: "rgb(25, 118, 210)" }}
+            onClick={postaviOcenu}
+          >
+            {" "}
+          </SendIcon>
         </IconButton>
-
-
+        <IconButton>
+          <CommentIcon
+            onClick={commentHandler}
+            style={{ fontSize: 45, color: "rgb(25, 118, 210)" }}
+          />
+        </IconButton>
       </div>
 
-
-     {showComment && (
-        <div style={{  border : '1px solid black ', padding:'10px',marginBottom:'5px', width:'200px', borderRadius:'10px'}}>
+      {showComment && (
+        <div
+          style={{
+            border: "1px solid black ",
+            padding: "10px",
+            marginBottom: "5px",
+            width: "200px",
+            borderRadius: "10px",
+          }}
+        >
           <TextField
             id="outlined-multiline-flexible"
             label="Komentar o receptu"
@@ -227,40 +283,44 @@ const Recept = ({ naziv, opis, sastojci, ime, email, prezime ,ocena, recept}) =>
             value={commentText}
             onChange={(e) => setCommentText(e.target.value)}
           />
-          <div style={{ marginTop: '10px' }}>
-            <Button variant="contained" endIcon={<SendIcon />} onClick={handleSendClick}>
+          <div style={{ marginTop: "10px" }}>
+            <Button
+              variant="contained"
+              endIcon={<SendIcon />}
+              onClick={handleSendClick}
+            >
               Send
             </Button>
           </div>
         </div>
       )}
 
-<div
- className="custom-link"
-  onClick={AllComentsHandler}
-    /* Dodaj funkcionalnost koja treba da se izvrši kada se klikne na "Sastojci" */
-  
-  style={{ cursor: 'pointer', color: 'black', marginBottom:'10px' }}
->
-  {"Komentari "} <KeyboardArrowDownIcon />
-</div>
-       
-<div className="commentsWrapper">
-  {showALLComments && (
-    <div className="commentsContainer1">
-      {komentari.map((komentar, index) => (
-        <div key={index} className="commentContainer">
-          <h6 style={{ color: 'black', margin: '0' }}>{komentar.korisnik_email}</h6>
-          <h3 style={{ color: 'black', margin: '0' }}>{komentar.sadrzaj}</h3>
-        </div>
-      ))}
-    </div>
-  )}
-</div>
+      <div
+        className="custom-link"
+        onClick={AllComentsHandler}
+        /* Dodaj funkcionalnost koja treba da se izvrši kada se klikne na "Sastojci" */
 
+        style={{ cursor: "pointer", color: "black", marginBottom: "10px" }}
+      >
+        {"Komentari "} <KeyboardArrowDownIcon />
+      </div>
 
-
-
+      <div className="commentsWrapper">
+        {showALLComments && (
+          <div className="commentsContainer1">
+            {komentari.map((komentar, index) => (
+              <div key={index} className="commentContainer">
+                <h6 style={{ color: "black", margin: "0" }}>
+                  {komentar.korisnik_email}
+                </h6>
+                <h3 style={{ color: "black", margin: "0" }}>
+                  {komentar.sadrzaj}
+                </h3>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };

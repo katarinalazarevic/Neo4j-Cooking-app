@@ -161,14 +161,22 @@ def receptiKorisnikaKojePratim():
 
         recepti_query = """
         MATCH (korisnik:Korisnik {email: $email})-[:PRAĆENJE]->(praceni:Korisnik)-[:POSTAVLJA]->(recept:Recept)
-        RETURN DISTINCT recept
+        RETURN COLLECT(recept {.*, email: praceni.email}) AS recepti
         """
         recepti_pracenih_korisnika = graph.run(recepti_query, email=korisnik_email).data()
 
-        return jsonify({"recepti": recepti_pracenih_korisnika}), 200
+        # Prilagodi rezultat
+        rezultat = recepti_pracenih_korisnika[0]['recepti'] if recepti_pracenih_korisnika else []
+
+        return jsonify({"recepti": rezultat}), 200
 
     except Exception as e:
         return str(e), 500
+
+
+
+
+
 
 
 

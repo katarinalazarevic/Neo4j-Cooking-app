@@ -16,6 +16,18 @@
     color: black;
   }
   
+  .follow-text {
+    cursor: pointer;
+    transition: font-size 0.3s; 
+  }
+  
+  .follow-text:hover {
+    text-decoration: underline;
+    font-weight: bold;
+    font-size: 14px;  
+  }
+  
+  
   .pocetni
   {
     margin-bottom:30px;

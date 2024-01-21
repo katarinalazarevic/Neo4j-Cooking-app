@@ -17,7 +17,7 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import MoreIcon from "@mui/icons-material/MoreVert";
 import AddIcon from "@mui/icons-material/Add";
 import SendIcon from "@mui/icons-material/Send";
-
+import VisibilityIcon from '@mui/icons-material/Visibility';
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { InputAdornment, TextField } from "@mui/material";
@@ -219,6 +219,30 @@ export default function PrimarySearchAppBar({
     // Ovde možete dodati logiku za obradu pretrage ili pozvati funkciju za pretragu
   };
 
+  const receptiPratiocaHandler=  async ()=>
+  {
+    try {
+      const response = await axios.post('http://127.0.0.1:5000/receptiKorisnikaKojePratim',
+     {
+       korisnik:storedUsername
+      },
+      {
+        headers:{
+            "Content-Type": "application/json",
+        }
+      }
+      );
+      console.log(response.data);
+
+      setujFiltriraniRecepti(response.data.recepti);
+
+     //setRecepti(response.data.recepti);
+     // Ovdje možete obraditi odgovor od servera
+    } catch (error) {
+      console.error("Došlo je do greške prilikom dohvaćanja proizvoda:", error);
+    }
+  };
+
   const menuId = "primary-search-account-menu";
   const renderMenu = (
     <Menu
@@ -402,26 +426,26 @@ export default function PrimarySearchAppBar({
       {/* Ostatak vašeg koda */}
     </div>
 
+
+    <div style={{ display: "flex", alignItems: "center" }}>
+            <p style={{ marginLeft: '25px' }}>Recepti pratioca </p>
+            <IconButton>
+              <VisibilityIcon
+                style={{ marginLeft: "2px", color:'white' }}
+                size="large"
+                onClick={receptiPratiocaHandler}
+              />
+            </IconButton>
+          </div>
+
+
+
+    
+
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: { xs: "none", md: "flex" } }}>
-            <IconButton
-              size="large"
-              aria-label="show 4 new mails"
-              color="inherit"
-            >
-              <Badge badgeContent={4} color="error">
-                <MailIcon />
-              </Badge>
-            </IconButton>
-            <IconButton
-              size="large"
-              aria-label="show 17 new notifications"
-              color="inherit"
-            >
-              <Badge badgeContent={17} color="error">
-                <NotificationsIcon />
-              </Badge>
-            </IconButton>
+           
+            
             <IconButton
               size="large"
               edge="end"
