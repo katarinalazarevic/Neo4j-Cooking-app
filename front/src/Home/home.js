@@ -9,7 +9,7 @@ import PrimarySearchAppBar from "../Navbar/navbar";
 const Home= ()=>
 {
     const [recepti, setRecepti] = useState([]);
-    const [novih10, setNovih10]= useState([]);
+   
     const storedUsername = localStorage.getItem('username');
     const storedName = localStorage.getItem('ime');
     const storedPrezime= localStorage.getItem('prezime');
@@ -28,9 +28,9 @@ const Home= ()=>
     
     const ucitajRecepte = async () => {
         try {
-          const response = await axios.post('http://127.0.0.1:5000/receptiKorisnika',
+          const response = await axios.get('http://127.0.0.1:5000/vratiRecepte',
          {
-            email: storedUsername
+          
           },
           {
             headers:{
@@ -38,7 +38,7 @@ const Home= ()=>
             }
           }
           );
-          console.log(response.data);
+          console.log("Rcepeti koji su ucitani sa backa su : " + response.data.recepti);
           setRecepti(response.data.recepti);
           // Ovdje možete obraditi odgovor od servera
         } catch (error) {
@@ -61,9 +61,9 @@ const Home= ()=>
             key={index} // Preporučljivo je koristiti jedinstveni ključ za svaki element u iteraciji
             naziv={recept.naziv}
             opis={recept.opis_pripreme}
-            sastojci={recept.sastojci}
+             sastojci={recept.sastojci}
             ime={storedName}
-            email={storedUsername}
+            email={recept.email}
             prezime={storedPrezime}
             ocena={recept.ocena}
             recept={recept}

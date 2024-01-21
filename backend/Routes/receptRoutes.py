@@ -94,23 +94,35 @@ def azurirajRecept():
     except Exception as e:
         return str(e), 500
 
-@recept_routes.route('/vratiRecepte',methods=['GET'])
+@recept_routes.route('/vratiRecepte', methods=['GET'])
 def vratiRecepte():
     try:
-    
-        result = graph.run("MATCH (r:Recept) RETURN r").data()
-        print(result)
-        recepti = [record["r"] for record in result]
+        result = graph.run("""
+            MATCH (r:Recept)<-[:POSTAVLJA]-(k:Korisnik)
+            RETURN r, k.email AS user_email
+        """).data()
+
+        recepti = []
+
+        for record in result:
+            recept = record["r"]
+            recept["email"] = record["user_email"]
+            recepti.append(recept)
 
         return jsonify({"recepti": recepti}), 200
     except Exception as e:
         return str(e), 500
 
+
+
+
+
 @recept_routes.route('/receptiKorisnika', methods=["POST"])
 def receptiKorisnika():
     try:
-        data=request.get_json()
-        email=data.get("email")
+        data = request.get_json()
+        email = data.get("email")
+
         # Pronađi korisnika sa datim email-om
         korisnik = graph.run("MATCH (k:Korisnik {email: $email}) RETURN k", email=email)
         korisnik = korisnik.evaluate()
@@ -120,21 +132,31 @@ def receptiKorisnika():
 
         # Pronađi sve recepte koje je korisnik postavio
         result = graph.run("MATCH (k:Korisnik {email: $email})-[:POSTAVLJA]->(r:Recept) RETURN r", email=email)
-        recepti = [record["r"] for record in result]
+        recepti = []
 
-        return jsonify({"recepti": recepti}), 200
+        for record in result:
+            recept = record["r"]
+            recept["email"] = email
+            recepti.append(recept)
+
+        return jsonify({"email": email, "recepti": recepti}), 200
     except Exception as e:
         return str(e), 500
 
 @recept_routes.route('/receptiPoKategoriji', methods=['POST'])
 def recepti_po_kategoriji():
     try:
-        data=request.get_json()
+        data = request.get_json()
         kategorija = data.get('kategorija')
 
         # Pronađi recepte sa datom kategorijom
-        result = graph.run("MATCH (r:Recept {kategorija: $kategorija}) RETURN r", kategorija=kategorija)
-        recepti = [record["r"] for record in result]
+        result = graph.run("MATCH (r:Recept {kategorija: $kategorija})<-[:POSTAVLJA]-(k:Korisnik) RETURN r, k.email AS user_email", kategorija=kategorija)
+        recepti = []
+
+        for record in result:
+            recept = record["r"]
+            recept["email"] = record["user_email"]
+            recepti.append(recept)
 
         return jsonify({"recepti": recepti}), 200
     except Exception as e:

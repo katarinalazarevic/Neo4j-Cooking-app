@@ -73,12 +73,33 @@ export default function PrimarySearchAppBar({
   const [donjaGranica, setDonjaGranica] = React.useState('');
   const [gornjaGranica, setGornjaGranica] = React.useState('');
 
+  const storedUsername = localStorage.getItem('username');
+
   // const [filtriraniRecepte, setfiltriraniRecepte]= React.useState([]);
 
   const navigate = useNavigate();
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+
+
+  const [showMyRecipes, setShowMyRecipes] = React.useState(false);
+
+  const toggleRecipesHandler = async () => {
+    // Ovde možete dodati logiku za dohvatanje i prikazivanje recepata
+    setShowMyRecipes((prevValue) => !prevValue);
+    console.log(showMyRecipes);
+
+    if(showMyRecipes==true)
+    {
+      ucitajsveRecepte();
+    }
+    else
+    {
+      vratiSamoMojerecepteHandler();
+    }
+  };
+
 
   const PrebaciNaNovuStranicu = () => {
     navigate("/dodavanjeRecepta");
@@ -162,6 +183,32 @@ export default function PrimarySearchAppBar({
         } catch (error) {
           console.error("Došlo je do greške prilikom dohvaćanja proizvoda:", error);
         }
+      };
+
+      const vratiSamoMojerecepteHandler = async  ()=>
+      {
+       
+       
+           try {
+              const response = await axios.post('http://127.0.0.1:5000/receptiKorisnika',
+             {
+               email:storedUsername
+              },
+              {
+                headers:{
+                    "Content-Type": "application/json",
+                }
+              }
+              );
+              console.log(response.data);
+    
+              setujFiltriraniRecepti(response.data.recepti);
+    
+             //setRecepti(response.data.recepti);
+             // Ovdje možete obraditi odgovor od servera
+            } catch (error) {
+              console.error("Došlo je do greške prilikom dohvaćanja proizvoda:", error);
+            }
       };
   
   
@@ -338,6 +385,22 @@ export default function PrimarySearchAppBar({
              
             </SendIcon>
           </IconButton>
+
+          <div>
+      <div style={{ display: "flex", alignItems: "center" }}>
+        <p style={{ margin: 0 }}>
+          {showMyRecipes ? "Prikazi sve recepte" : "Prikazi moje recepte"}
+        </p>
+        <IconButton>
+          <AddIcon
+            style={{ marginLeft: "2px", color: 'white' }}
+            size="large"
+            onClick={toggleRecipesHandler}
+          />
+        </IconButton>
+      </div>
+      {/* Ostatak vašeg koda */}
+    </div>
 
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: { xs: "none", md: "flex" } }}>

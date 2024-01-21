@@ -24,11 +24,12 @@ const Recept = ({ naziv, opis, sastojci, ime, email, prezime ,ocena, recept}) =>
   const [komentari, setKomentari] = useState([]);
   const [showALLComments, setshowALLComments]= useState(false);
 
-
+  //console.log(recept.recept.sastojci);
 
   useEffect(()=>
   {
       ucitajKomentareRecepta();
+     // console.log("email je", email );
   },[])
 
 
