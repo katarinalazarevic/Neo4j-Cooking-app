@@ -4,6 +4,7 @@ import axios from "axios";
 import { Button, Checkbox, FormControlLabel, Input, TextField } from "@mui/material";
 import { CheckBox } from "@mui/icons-material";
 import PrimarySearchAppBar from "../Navbar/navbar";
+import SendIcon from "@mui/icons-material/Send";
 
 function DodavanjeRecepte() {
   const storedUsername = localStorage.getItem("username");
@@ -71,10 +72,11 @@ function DodavanjeRecepte() {
       );
 
       console.log("Odgovor od servera:", response.data);
-      // Ovde možete dalje obraditi odgovor sa servera
+      window.confirm("Uspesno ste dodali recept!");
+      
     } catch (error) {
       console.error("Došlo je do greške prilikom slanja zahteva:", error);
-      // Ovde možete obraditi grešku, npr. prikazati korisniku poruku o grešci
+     
     }
   };
 
@@ -129,6 +131,7 @@ function DodavanjeRecepte() {
         <TextField
           id="outlined-multiline-flexible"
           label="Opisite kratko nacin pripreme recepta"
+          style={{width:'300px'}}
           multiline
           maxRows={4}
           value={opisPripreme}
@@ -182,9 +185,15 @@ function DodavanjeRecepte() {
         />
 
        {/* <div> <button className="primary" onClick={handleDodajRecept}>Potvrdi</button> </div> */}
-      <div> <Button variant="outlined" size="medium"  onClick={handleDodajRecept} className="dugme" >
+      <div> 
+        {/* <Button variant="outlined" size="medium"  onClick={handleDodajRecept} className="dugme" >
           Dodaj recept
-        </Button>
+        </Button> */}
+
+        <Button variant="contained"  onClick={handleDodajRecept}  endIcon={<SendIcon />}>
+  Dodaj recept 
+</Button>
+
         </div>
       </div>
     </div>

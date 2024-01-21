@@ -55,7 +55,7 @@ const Home= ()=>
               ucitajsveRecepte= {ucitajRecepte}
               >
               </PrimarySearchAppBar>
-            <div style={{ overflowY: 'scroll', maxHeight: '510px', marginTop:'120px' }}>
+            <div style={{ overflowY: 'scroll', maxHeight: '700px', marginTop:'60px' }}>
         {recepti.map((recept, index) => (
           <Recept
             key={index} // Preporučljivo je koristiti jedinstveni ključ za svaki element u iteraciji

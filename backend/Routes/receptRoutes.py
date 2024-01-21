@@ -264,14 +264,14 @@ def nutritivnaVrednostRecepta():
         data=request.get_json()
         recept=data.get("naziv")
 
-        result=graph.run("""MATCH (r:Recept {naziv: "Proba4"})-[:SADRZI]->(s:Sastojak)
+        result=graph.run("""MATCH (r:Recept {naziv: $recept})-[:SADRZI]->(s:Sastojak)
                             WITH r.sastojci AS naziv_sastojka, s
                             RETURN 
                               naziv_sastojka AS naziv_sastojka,
                               COLLECT(DISTINCT s.kalorijska_vrednost) AS kalorijska_vrednost,
                               COLLECT(DISTINCT s.proteini) AS proteini,
                               COLLECT(DISTINCT s.masti) AS masti,
-                              COLLECT(DISTINCT s.ugljeni_hidrati) AS ugljeni_hidrati""").data()
+                              COLLECT(DISTINCT s.ugljeni_hidrati) AS ugljeni_hidrati""", recept=recept).data()
         
         sastojci = result[0]['naziv_sastojka']
         kalorijska_vrednost = result[0]['kalorijska_vrednost']

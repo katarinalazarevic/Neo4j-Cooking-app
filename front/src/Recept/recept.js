@@ -33,13 +33,22 @@ const Recept = ({
   const [komentari, setKomentari] = useState([]);
   const [showALLComments, setshowALLComments] = useState(false);
 
+  const [nutritivneVrednosti, setNutritivneVrednosti] = useState();
+
+  const [nutritivneVrednostiPrikaz, setNutritivneVrednostiPrikaz] = useState(false);
   //console.log(recept.recept.sastojci);
   const storedUsername = localStorage.getItem('username');
 
   useEffect(() => {
     ucitajKomentareRecepta();
+    pribaviNutritivneVrednosti();
     // console.log("email je", email );
   }, []);
+
+  const handleNutritivneVrednostiClick = () => {
+    setNutritivneVrednostiPrikaz((prevState) => !prevState);
+  };
+
 
   const ucitajKomentareRecepta = async () => {
     try {
@@ -108,6 +117,30 @@ const Recept = ({
   const commentHandler = () => {
     setshowComment(!showComment);
   };
+
+  const pribaviNutritivneVrednosti= async () =>
+  {
+
+    try {
+      const response = await axios.post(
+        "http://127.0.0.1:5000/nutritivnaVrednostRecepta",
+        {
+          naziv: naziv,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log(response.data);
+      setNutritivneVrednosti(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+
 
   const followHandler=  async ()=>
   {
@@ -194,6 +227,32 @@ const Recept = ({
         <h5 style={{ display: "inline-block" }}>
           Trenutna ocena: <span style={{ color: "red" }}>{ocena}</span>/{5}
         </h5>
+
+        <div
+        className="custom-link"
+        onClick={handleNutritivneVrednostiClick}
+        
+
+        style={{ cursor: "pointer", color: "black" }}
+      >
+        {"Nutritivne vrednosti "}  <KeyboardArrowDownIcon />
+
+        {nutritivneVrednostiPrikaz && (
+        <div className="NutritivneVrednosti">
+          <ul>
+            <li>Ukupan broj kalorija: <span style={{color:'red'}}> {nutritivneVrednosti.SumKCAL}g </span></li>
+            <li>Ukupan broj masti:   <span style={{color:'red'}}> {nutritivneVrednosti.SumM}g </span></li>
+            <li>Ukupan broj proteina:  <span style={{color:'red'}}> {nutritivneVrednosti.SumP}g </span></li>
+            <li>Ukupan broj ugljenih hidrata:  <span style={{color:'red'}}> {nutritivneVrednosti.SumUH}g </span></li>
+          </ul>
+        </div>
+      )}
+
+
+        
+      </div>
+
+
         <p syle={{ margin: "0px", padding: "0px" }}>
           {" "}
           Kategorija recepta:{" "}
