@@ -45,7 +45,7 @@ def delete():
     try:
         data = request.get_json()
         email=data.get("email")
-        graph.run("MATCH (k:Korisnik {email: $email}) DELETE k", email=email)
+        graph.run("MATCH (k:Korisnik {email: $email}) DETACH DELETE k", email=email)
         return "Korisnik uspešno obrisan.",201
     except Exception as e:
         return str(e), 500  # 500 označava internu serversku grešku
@@ -161,7 +161,7 @@ def receptiKorisnikaKojePratim():
 
         recepti_query = """
         MATCH (korisnik:Korisnik {email: $email})-[:PRAĆENJE]->(praceni:Korisnik)-[:POSTAVLJA]->(recept:Recept)
-        RETURN COLLECT(recept {.*, email: praceni.email}) AS recepti
+        RETURN COLLECT(recept {.*, email: praceni.email, ime:praceni.ime, prezime:praceni.prezime}) AS recepti 
         """
         recepti_pracenih_korisnika = graph.run(recepti_query, email=korisnik_email).data()
 

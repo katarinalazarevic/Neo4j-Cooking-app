@@ -42,7 +42,7 @@ def obrisiSastojak():
         if not existing_sastojak:
             return "Sastojak sa datim nazivom ne postoji.", 404
 
-        graph.run("MATCH (s:Sastojak {naziv: $naziv}) DELETE s", naziv=naziv)
+        graph.run("MATCH (s:Sastojak {naziv: $naziv}) DETACH DELETE s", naziv=naziv)
 
         return "Sastojak uspešno obrisan.", 200
     except Exception as e:

@@ -43,11 +43,13 @@
   }
   
   .commentContainer {
-   border : 1px solid black;
+    border: 1px solid black;
     padding: 10px;
     margin-bottom: 10px;
-    width: 200px;
+    width: auto;
+    max-width: 280px; /* Opcionalno: postavljanje maksimalne širine ako želite ograničiti širinu */
   }
+  
   .commentsWrapper {
    
     overflow-x: auto; /* Omogući horizontalni skrol ako je potrebno */

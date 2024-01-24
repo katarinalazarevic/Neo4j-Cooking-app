@@ -12,7 +12,7 @@ import Box from "@mui/material/Box";
 import Rating from "@mui/material/Rating";
 import Typography from "@mui/material/Typography";
 import SendIcon from "@mui/icons-material/Send";
-import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import axios from "axios";
 
 const Recept = ({
@@ -35,9 +35,10 @@ const Recept = ({
 
   const [nutritivneVrednosti, setNutritivneVrednosti] = useState();
 
-  const [nutritivneVrednostiPrikaz, setNutritivneVrednostiPrikaz] = useState(false);
+  const [nutritivneVrednostiPrikaz, setNutritivneVrednostiPrikaz] =
+    useState(false);
   //console.log(recept.recept.sastojci);
-  const storedUsername = localStorage.getItem('username');
+  const storedUsername = localStorage.getItem("username");
 
   useEffect(() => {
     ucitajKomentareRecepta();
@@ -48,7 +49,6 @@ const Recept = ({
   const handleNutritivneVrednostiClick = () => {
     setNutritivneVrednostiPrikaz((prevState) => !prevState);
   };
-
 
   const ucitajKomentareRecepta = async () => {
     try {
@@ -78,7 +78,7 @@ const Recept = ({
       const response = await axios.post(
         "http://127.0.0.1:5000/dodajKomentar",
         {
-          korisnik_email: email,
+          korisnik_email: storedUsername,
           sadrzaj: commentText,
           naziv_recepta: naziv,
         },
@@ -89,7 +89,7 @@ const Recept = ({
         }
       );
 
-      console.log(response.data); 
+      console.log(response.data);
       window.confirm("Komentar uspesno dodat!");
     } catch (error) {
       console.error("Greška prilikom slanja zahteva:", error);
@@ -110,7 +110,7 @@ const Recept = ({
 
   const handleRatingChange = (event, newValue) => {
     setValue(newValue);
-   
+
     console.log("Nova vrednost ocene:", newValue);
   };
 
@@ -118,9 +118,7 @@ const Recept = ({
     setshowComment(!showComment);
   };
 
-  const pribaviNutritivneVrednosti= async () =>
-  {
-
+  const pribaviNutritivneVrednosti = async () => {
     try {
       const response = await axios.post(
         "http://127.0.0.1:5000/nutritivnaVrednostRecepta",
@@ -140,21 +138,16 @@ const Recept = ({
     }
   };
 
-
-
-  const followHandler=  async ()=>
-  {
+  const followHandler = async () => {
     console.log(email);
     console.log(storedUsername);
 
-    const obj ={
-      korisnik1:storedUsername,
-      korisnik2:email
+    const obj = {
+      korisnik1: storedUsername,
+      korisnik2: email,
     };
 
     try {
-      
-
       console.log(obj);
       const response = await axios.post(
         "http://127.0.0.1:5000/zapratiKorisnika",
@@ -168,14 +161,9 @@ const Recept = ({
 
       console.log("Odgovor od servera:", response.data);
       window.confirm("Uspesno ste zapratili korisnika ", email);
-     
     } catch (error) {
       console.error("Došlo je do greške prilikom slanja zahteva:", error);
-    
     }
-
-
-
   };
   const postaviOcenu = async () => {
     try {
@@ -195,13 +183,9 @@ const Recept = ({
         }
       );
 
-     
       window.confirm("Uspesno dodata ocena!");
-      
     } catch (error) {
       console.error("Došlo je do greške prilikom slanja zahteva:", error);
-      
-    
     }
   };
 
@@ -210,12 +194,20 @@ const Recept = ({
       <div className="pocetni">
         <div className="name" style={{ display: "flex" }}>
           {ime} {prezime}{" "}
-          <p   className="follow-text" 
-          style={{ marginLeft: "10px", marginTop: "7px", fontSize: "12px",color:'black' }} onClick={followHandler}>
-
-            Follow
-          </p>
-         
+          {storedUsername != email && (
+            <p
+              className="follow-text"
+              style={{
+                marginLeft: "10px",
+                marginTop: "7px",
+                fontSize: "12px",
+                color: "black",
+              }}
+              onClick={followHandler}
+            >
+              Follow
+            </p>
+          )}
         </div>
 
         <div className="email">{email}</div>
@@ -229,29 +221,42 @@ const Recept = ({
         </h5>
 
         <div
-        className="custom-link"
-        onClick={handleNutritivneVrednostiClick}
-        
-
-        style={{ cursor: "pointer", color: "black" }}
-      >
-        {"Nutritivne vrednosti "}  <KeyboardArrowDownIcon />
-
-        {nutritivneVrednostiPrikaz && (
-        <div className="NutritivneVrednosti">
-          <ul>
-            <li>Ukupan broj kalorija: <span style={{color:'red'}}> {nutritivneVrednosti.SumKCAL}g </span></li>
-            <li>Ukupan broj masti:   <span style={{color:'red'}}> {nutritivneVrednosti.SumM}g </span></li>
-            <li>Ukupan broj proteina:  <span style={{color:'red'}}> {nutritivneVrednosti.SumP}g </span></li>
-            <li>Ukupan broj ugljenih hidrata:  <span style={{color:'red'}}> {nutritivneVrednosti.SumUH}g </span></li>
-          </ul>
+          className="custom-link"
+          onClick={handleNutritivneVrednostiClick}
+          style={{ cursor: "pointer", color: "black" }}
+        >
+          {"Nutritivne vrednosti "} <KeyboardArrowDownIcon />
+          {nutritivneVrednostiPrikaz && (
+            <div className="NutritivneVrednosti">
+              <ul>
+                <li>
+                  Ukupan broj kalorija:{" "}
+                  <span style={{ color: "red" }}>
+                    {nutritivneVrednosti.SumKCAL.toFixed(2)} kcal
+                  </span>
+                </li>
+                <li>
+                  Ukupan broj masti:{" "}
+                  <span style={{ color: "red" }}>
+                    {nutritivneVrednosti.SumM.toFixed(2)} g
+                  </span>
+                </li>
+                <li>
+                  Ukupan broj proteina:{" "}
+                  <span style={{ color: "red" }}>
+                    {nutritivneVrednosti.SumP.toFixed(2)} g
+                  </span>
+                </li>
+                <li>
+                  Ukupan broj ugljenih hidrata:{" "}
+                  <span style={{ color: "red" }}>
+                    {nutritivneVrednosti.SumUH.toFixed(2)} g
+                  </span>
+                </li>
+              </ul>
+            </div>
+          )}
         </div>
-      )}
-
-
-        
-      </div>
-
 
         <p syle={{ margin: "0px", padding: "0px" }}>
           {" "}
@@ -359,36 +364,31 @@ const Recept = ({
       <div
         className="custom-link"
         onClick={AllComentsHandler}
-       
-
         style={{ cursor: "pointer", color: "black", marginBottom: "10px" }}
       >
         {"Komentari "} <KeyboardArrowDownIcon />
       </div>
 
       <div className="commentsWrapper">
-  {showALLComments && (
-    <div className="commentsContainer1">
-      {komentari.length > 0 ? (
-       
-        komentari.map((komentar, index) => (
-          <div key={index} className="commentContainer">
-            <h6 style={{ color: "black", margin: "0" }}>
-              {komentar.korisnik_email}
-            </h6>
-            <h3 style={{ color: "black", margin: "0" }}>
-              {komentar.sadrzaj}
-            </h3>
+        {showALLComments && (
+          <div className="commentsContainer1">
+            {komentari.length > 0 ? (
+              komentari.map((komentar, index) => (
+                <div key={index} className="commentContainer">
+                  <h6 style={{ color: "black", margin: "0" }}>
+                    {komentar.korisnik_email}
+                  </h6>
+                  <h3 style={{ color: "black", margin: "0" }}>
+                    {komentar.sadrzaj}
+                  </h3>
+                </div>
+              ))
+            ) : (
+              <p style={{ color: "black" }}>Ovaj recept nema komentare.</p>
+            )}
           </div>
-        ))
-      ) : (
-     
-        <p style={{ color: "black" }}>Ovaj recept nema komentare.</p>
-      )}
-    </div>
-  )}
-</div>
-
+        )}
+      </div>
     </div>
   );
 };

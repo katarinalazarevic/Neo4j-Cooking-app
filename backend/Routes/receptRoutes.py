@@ -99,7 +99,7 @@ def vratiRecepte():
     try:
         result = graph.run("""
             MATCH (r:Recept)<-[:POSTAVLJA]-(k:Korisnik)
-            RETURN r, k.email AS user_email
+            RETURN r, k.email AS user_email, k.ime as ime, k.prezime as prezime
         """).data()
 
         recepti = []
@@ -107,6 +107,8 @@ def vratiRecepte():
         for record in result:
             recept = record["r"]
             recept["email"] = record["user_email"]
+            recept["ime"]= record["ime"]
+            recept["prezime"]= record["prezime"]
             recepti.append(recept)
 
         return jsonify({"recepti": recepti}), 200
@@ -137,7 +139,10 @@ def receptiKorisnika():
         for record in result:
             recept = record["r"]
             recept["email"] = email
+            recept["ime"] = korisnik["ime"]
+            recept["prezime"] = korisnik["prezime"]
             recepti.append(recept)
+
 
         return jsonify({"email": email, "recepti": recepti}), 200
     except Exception as e:
@@ -150,12 +155,16 @@ def recepti_po_kategoriji():
         kategorija = data.get('kategorija')
 
         # Pronađi recepte sa datom kategorijom
-        result = graph.run("MATCH (r:Recept {kategorija: $kategorija})<-[:POSTAVLJA]-(k:Korisnik) RETURN r, k.email AS user_email", kategorija=kategorija)
+        result = graph.run("MATCH (r:Recept {kategorija: $kategorija})<-[:POSTAVLJA]-(k:Korisnik) RETURN r, k.email AS user_email , k.ime AS ime1, k.prezime AS prezime1"
+                           , kategorija=kategorija)
         recepti = []
 
         for record in result:
             recept = record["r"]
             recept["email"] = record["user_email"]
+            recept["ime"]=record["ime1"]
+            recept["prezime"]=record["prezime1"]
+            
             recepti.append(recept)
 
         return jsonify({"recepti": recepti}), 200
@@ -200,7 +209,7 @@ def receptiPoCeni():
                 kolicina, sastojak_naziv = map(str.strip, sastojak_unos.split(' ', 1))
                 print(sastojak_naziv)
                 print(kolicina)
-                sastojak_node = graph.run("MERGE (s:Sastojak {naziv: $naziv}) RETURN s", naziv=sastojak_naziv).evaluate()
+                sastojak_node = graph.run("MATCH (s:Sastojak {naziv: $naziv}) RETURN s", naziv=sastojak_naziv).evaluate()
 
                 if sastojak_node:
                     cena_sastojka = sastojak_node.get("cena", 0)
@@ -213,6 +222,23 @@ def receptiPoCeni():
                 ukupna_cena=ukupna_cena+trenutna_cena
             print(ukupna_cena)
             if float(cenaOd) <= float(ukupna_cena) <= float(cenaDo):
+                # Dodaj informacije o korisniku u recept objekat
+                korisnik_info = graph.run("""
+                MATCH (k:Korisnik)-[:POSTAVLJA]->(r:Recept {naziv:$naziv})
+                    RETURN k.ime AS ime, k.prezime AS prezime, k.email AS email
+                """, naziv=recept["naziv"]).data()
+
+# Provera da li postoji korisnik_info pre nego što ga dodate u recept
+                if korisnik_info:
+                    # Dodaj informacije o korisniku u recept objekat
+                    korisnik_info = korisnik_info[0]  # Pristupamo prvom elementu u listi
+                    recept["ime"] = korisnik_info["ime"]
+                    recept["prezime"] = korisnik_info["prezime"]
+                    recept["email"] = korisnik_info["email"]
+
+                else:
+                    print("Korisnik nije pronađen")
+
                 odgovarajuci_recepti.append(recept)
 
         return jsonify({"recepti": odgovarajuci_recepti})
@@ -222,6 +248,12 @@ def receptiPoCeni():
     except Exception as e:
         return str(e), 500
 
+
+      
+
+        
+
+    
 @recept_routes.route('/dodajOcenuReceptu', methods=["POST"])
 def dodajOcenuReceptu():
     try:
@@ -238,11 +270,12 @@ def dodajOcenuReceptu():
 
         # Ako postoji recept, ažuriraj ocenu
         trenutna_ocena = existing_recept.get("ocena")
-        broj_ocena = existing_recept.get("broj_ocena") + 1
+        broj_ocena = existing_recept.get("broj_ocena") 
         if(broj_ocena==0):
             nova_ocena=nova_ocena
         else:
             nova_ocena = (trenutna_ocena + nova_ocena) / 2
+        broj_ocena=broj_ocena+1
         
 
         query = """
@@ -287,17 +320,18 @@ def nutritivnaVrednostRecepta():
         for i in range(len(sastojci)):
             kolicina_string, sastojak_naziv = map(str.strip, sastojci[i].split(' ', 1))
             kolicina = float(''.join(filter(str.isdigit, kolicina_string)))
-            print(sastojak_naziv)
-            print(kolicina)
-            kalorije=float(''.join(filter(str.isdigit, kalorijska_vrednost[i])))
-            print(kalorije)
-            sumKCAL+=kolicina*kalorije/100
-            uh=float(ugljeni_hidrati[i])
-            m=float(masti[i])
-            p=float(proteini[i])
-            sumUH+=kolicina*uh/100
-            sumM+=kolicina*m/100
-            sumP+=kolicina*p/100
+    
+    # Provjeri indeks prije pristupa listama
+            if i < len(kalorijska_vrednost) and i < len(proteini) and i < len(masti) and i < len(ugljeni_hidrati):
+                kalorije = float(''.join(filter(str.isdigit, kalorijska_vrednost[i])))
+                uh = float(ugljeni_hidrati[i])
+                m = float(masti[i])
+                p = float(proteini[i])
+
+                sumKCAL += round(kolicina * kalorije / 100, 2)
+                sumUH += round(kolicina * uh / 100, 2)
+                sumM += round(kolicina * m / 100, 2)
+                sumP += round(kolicina * p / 100, 2)
             print("suma", sumKCAL)
 
         return jsonify({

@@ -155,18 +155,12 @@ export default function PrimarySearchAppBar({
   };
 
  const receptiPoCeniHandler = async  () => {
-    console.log('Donja granica:', donjaGranica);
-    console.log('Gornja granica:', gornjaGranica);
-    console.log("proba", gornjaGranica==0);
-    const obj={
-      cenaOd:donjaGranica,
-      cenaDo:gornjaGranica
-    };
-
+   
        try {
           const response = await axios.post('http://127.0.0.1:5000/receptiPoCeni',
          {
-           obj
+           cenaOd:donjaGranica,
+           cenaDo:gornjaGranica
           },
           {
             headers:{
@@ -445,6 +439,7 @@ export default function PrimarySearchAppBar({
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: { xs: "none", md: "flex" } }}>
            
+          
             
             <IconButton
               size="large"

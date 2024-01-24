@@ -62,9 +62,9 @@ const Home= ()=>
             naziv={recept.naziv}
             opis={recept.opis_pripreme}
              sastojci={recept.sastojci}
-            ime={storedName}
+            ime={recept.ime}
             email={recept.email}
-            prezime={storedPrezime}
+            prezime={recept.prezime}
             ocena={recept.ocena}
             recept={recept}
           />
